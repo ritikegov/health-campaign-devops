@@ -26,7 +26,7 @@ variable "availability_zones" {
 
 variable "kubernetes_version" {
   description = "kubernetes version"
-  default = "1.32"
+  default = "1.34"
 }
 
 variable "instance_types" {
@@ -37,12 +37,12 @@ variable "instance_types" {
 
 variable "min_worker_nodes" {
   description = "eGov recommended below worker node counts as default for min nodes"
-  default = "1" #REPLACE IF NEEDED
+  default = "5" #REPLACE IF NEEDED
 }
 
 variable "desired_worker_nodes" {
   description = "eGov recommended below worker node counts as default for desired nodes"
-  default = "3" #REPLACE IF NEEDED
+  default = "5" #REPLACE IF NEEDED
 }
 
 variable "max_worker_nodes" {
