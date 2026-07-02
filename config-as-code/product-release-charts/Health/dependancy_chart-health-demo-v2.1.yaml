@@ -1,0 +1,126 @@
+
+version: v2.1
+modules:
+  - name: backbone
+    services:
+      - kafka-kraft
+      - kafka-connect
+      - kafka-connect-restart-tasks
+      - elasticsearch-data
+      - elasticsearch-master
+      - kibana
+  - name: authn-authz
+    services:
+      - redis
+      - ingress-nginx
+      - cert-manager
+      - zuul:v1.3.1-96b24b0d72-39
+  - name: core
+    dependencies:
+      - "backbone"
+      - "authn-authz"
+      - "frontend"
+    services:
+      - egovio/egov-accesscontrol:DIGIT-2.9-LTS-237578ce80-10
+      - egovio/egov-enc-service-db:central-instance-e346023dcb-26
+      - egovio/egov-localization-db:DIGIT-2.9-LTS-237578ce80-10
+      - egovio/egov-idgen:DIGIT-2.9-LTS-07f47790b8-8
+      - egovio/egov-filestore:DIGIT-2.9-LTS-237578ce80-14
+      - egovio/egov-indexer:2.9.1-c781a2f714-65
+      - egovio/egov-notification-mail:DIGIT-2.9-LTS-07f47790b8-5
+      - egovio/egov-notification-sms:DIGIT-2.9-LTS-07f47790b8-7
+      - egovio/egov-otp:central-instance-a0fc793059-8
+      - egovio/egov-persister:DIGIT-2.9-LTS-07f47790b8-8
+      ## - egovio/egov-url-shortening:v1.1.2-1715164454-3 not used in health now
+      - egovio/egov-user:central-instance-70f75d2a82-77
+      - egovio/user-otp:v2.9.0-063968adc7-25
+      - egovio/egov-workflow-v2-db:central-instance-1248cc50e5-38
+      - egovio/audit-service:DIGIT-2.9-LTS-07f47790b8-12
+      - egovio/error-handler:master-impel-dump-a28582d
+      - egovio/playground:2.0
+      - egovio/mdms-v2:central-instance-6fae5fdefc-96
+      - egovio/boundary-service:master-1e8d2bb
+  - name: business
+    dependencies:
+      - "core"
+    services:
+      - egovio/egov-hrms-db:master-620d748
+  - name: frontend
+    dependencies:
+      - "business"
+    services:
+      - egovio/digit-ui:health-dashboard-digit-ui-8a3b8bbd1b-850
+      - egovio/dashboard-ui:master-613926d
+  - name: m_pgr             #PGR
+    dependencies:
+      - "core"
+      - "business"
+    services:
+      - egovio/pgr-services-db:master-620d748
+  - name: dss   #dss
+    dependencies:
+      - "frontend"
+      - "core"
+      - "business"
+    services:
+      - egovio/dashboard-ingest:v1.1.4-72f8a8f87b-10
+      - egovio/dashboard-analytics:analytics-es8-auth-6a40b6e
+      - egovio/dss-dashboard:v1.8.0-0d70d60e63-53
+  - name: Other
+    dependencies:
+      - "core"
+      - "business"
+    services:
+      ## - egovio/egov-user-event:v1.2.0-c1e1e8ce24-21 not used currently in health
+  - name: m_health
+    dependencies:
+      - "backbone"
+      - "authn-authz"
+      - "core"
+      - "business"
+      - "dss"
+      - "Other"
+      - "frontend"
+      - "m_hcmconsole"
+    services:
+      - egovio/facility:master-eb25d83
+      - egovio/product:master-eb25d83
+      - egovio/individual:master-25a90a3
+      - egovio/transformer:HDDF-1277-8d30a8e
+      - egovio/stock:master-eb25d83
+      - egovio/household:master-61631c4
+      - egovio/project:master-61631c4
+      - egovio/referralmanagement:master-eb25d83
+      - egovio/health-attendance:master-89c74d7
+      - egovio/service-request-db:v1.2.0-01c2b65440-4
+      - egovio/health-muster-roll:master-89c74d7
+      - egovio/health-expense:master-89c74d7
+      - egovio/health-expense-calculator:master-89c74d7
+      - egovio/payments-ui:master-507e034
+      - egovio/pdf-service:multiarch-master-99a308d
+      - egovio/beneficiary-idgen:master-eb25d83
+      - inbox:inbox-workflow-fix-b6205e2
+  - name: m_hcmconsole
+    dependencies:
+      - "backbone"
+      - "authn-authz"
+      - "core"
+      - "m-health"
+      - "m_hcm_microplanning"
+    services:
+      - egovio/project-factory-db:master-aa57e79
+      - egovio/workbench-ui:master-e20f66d
+      - egovio/excel-ingestion-db:master-25a90a3
+      - egovio/boundary-management:master-aa57e79
+  - name: m_hcm_microplanning
+    dependencies:
+      - "backbone"
+      - "authn-authz"
+      - "core"
+      - "m_hcmconsole"
+      - "m_health"
+    services:
+      - plan-service:v1.0.2-0ea4104b4b-303
+      - resource-generator:v1.0.2-b8bfac27c7-142
+      - census-service:v1.0.1-ddae2629dc-105
+      - microplan-ui:v0.4.0-503b2e90fd-142
