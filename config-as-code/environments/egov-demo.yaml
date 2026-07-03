@@ -654,8 +654,8 @@ beneficiary-idgen:
   id-pool-generation-max-records-per-persist-batch: 500
   id-pool-generation-max-size: 10000
   id-dispatch-retrieval-restrict-to-today-enabled: "true"
-  kafka-topics-consumer-bulk-update-topic: "beneficiary-id-gen-bulk-update-health-topic"
-  kafka-topics-consumer-bulk-create-topic: "beneficiary-id-gen-bulk-create-health-topic"
+  kafka-topics-consumer-bulk-update-topic: "beneficiary-id-gen-bulk-update-topic"
+  kafka-topics-consumer-bulk-create-topic: "beneficiary-id-gen-bulk-create-topic"
   kafka:
     topics:
       saveInIdPool: "save-in-id-pool"
@@ -777,6 +777,26 @@ health-expense-calculator:
   egov-musterroll-search-endpoint: "/health-muster-roll/v1/_search"
   billing-frequency-custom-minimum-days: 1
   excell-state-level-tenant-id: "mz"
+  report-error-queue-topic: report-error-queue-topic
+  report-retry-queue-topic: report-retry-queue-topic
+  report-generation-trigger-topic: report-generation-trigger
+  report-generation-retry-trigger-topic: report-generation-retry-trigger
+  bill-generation-async-topic: bill-generation-async-topic
+  bill-generation-async-enabled: "true"
+  expense-bill-create-topic: expense-bill-create
+  expense-bill-update-topic: expense-bill-update
+  expense-bill-index-topic: expense-bill-index
+  payment-pdf-key: "bill-payment"
+  billing-frequency-custom-minimum-days: "1"
+  billing-config-v2-enabled: "true"
+  billing-config-create-topic: billing-config-create
+  billing-config-update-topic: billing-config-update
+  billing-period-status-update-topic: billing-period-status-update
+  billing-period-generation-enabled: "true"
+  billing-muster-roll-period-aware-enabled: "true"
+  project-management-system-kafka-update-topic: update-project
+  project-management-system-kafka-update-date-topic: update-project-date
+  spring-kafka-consumer-group-id: "health-expense-calculator"
 
 health-expense:
   central-instance-name: egov
@@ -790,6 +810,7 @@ health-expense:
   expense-billing-search-max-limit: 200
   spring-kafka-producer-properties-max-request-size: "10485760"
   egov-mdms-v2-search-endpoint: "/mdms-v2/v1/_search"
+  task-scheduler-bootstrap-tenants: "mz"
 
 health-muster-roll:
   central-instance-name: egov
