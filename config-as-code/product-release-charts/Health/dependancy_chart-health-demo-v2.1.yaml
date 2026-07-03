@@ -85,11 +85,11 @@ modules:
     services:
       - egovio/facility:master-eb25d83
       - egovio/product:master-eb25d83
-      - egovio/health-individual:master-nigeria-finalpull-41dfa34
+      - egovio/individual:master-nigeria-finalpull-cc46e8c
       - egovio/transformer:HDDF-1277-8d30a8e
       - egovio/stock:nigeria-go-deep-2-97ed978
       - egovio/household:master-61631c4
-      - egovio/project:master-61631c4
+      - egovio/project:master-nigeria-finalpull-cc46e8c
       - egovio/referralmanagement:master-nigeria-finalpull-41dfa34
       - egovio/health-attendance:nigeria-go-deep-3df8cd8
       - egovio/service-request-db:v1.2.0-01c2b65440-4
