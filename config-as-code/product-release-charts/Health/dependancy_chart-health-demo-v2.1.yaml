@@ -26,7 +26,7 @@ modules:
       - egovio/egov-localization-db:DIGIT-2.9-LTS-237578ce80-10
       - egovio/egov-idgen:DIGIT-2.9-LTS-07f47790b8-8
       - egovio/egov-filestore:DIGIT-2.9-LTS-237578ce80-14
-      - egovio/egov-indexer:2.9.1-c781a2f714-65
+      - egovio/egov-indexer-db:2.9.1-c781a2f714-65
       - egovio/egov-notification-mail:DIGIT-2.9-LTS-07f47790b8-5
       - egovio/egov-notification-sms:DIGIT-2.9-LTS-07f47790b8-7
       - egovio/egov-otp:central-instance-a0fc793059-8
@@ -44,19 +44,19 @@ modules:
     dependencies:
       - "core"
     services:
-      - egovio/egov-hrms-db:master-620d748
+      - egovio/egov-hrms:master-5f6032a
   - name: frontend
     dependencies:
       - "business"
     services:
       - egovio/digit-ui:health-dashboard-digit-ui-8a3b8bbd1b-850
-      - egovio/dashboard-ui:master-613926d
+      - egovio/dashboard-ui:master-2a437fe
   - name: m_pgr             #PGR
     dependencies:
       - "core"
       - "business"
     services:
-      - egovio/pgr-services-db:master-620d748
+      - egovio/pgr-services:master-7ce35df
   - name: dss   #dss
     dependencies:
       - "frontend"
@@ -64,7 +64,7 @@ modules:
       - "business"
     services:
       - egovio/dashboard-ingest:v1.1.4-72f8a8f87b-10
-      - egovio/dashboard-analytics:analytics-es8-auth-6a40b6e
+      - egovio/dashboard-analytics:analytics-es8-auth-nigeria-finalpull-5f98d99
       - egovio/dss-dashboard:v1.8.0-0d70d60e63-53
   - name: Other
     dependencies:
@@ -85,21 +85,24 @@ modules:
     services:
       - egovio/facility:master-eb25d83
       - egovio/product:master-eb25d83
-      - egovio/individual:master-25a90a3
+      - egovio/health-individual:master-nigeria-finalpull-41dfa34
       - egovio/transformer:HDDF-1277-8d30a8e
-      - egovio/stock:master-eb25d83
+      - egovio/stock:nigeria-go-deep-2-97ed978
       - egovio/household:master-61631c4
       - egovio/project:master-61631c4
-      - egovio/referralmanagement:master-eb25d83
-      - egovio/health-attendance:master-89c74d7
+      - egovio/referralmanagement:master-nigeria-finalpull-41dfa34
+      - egovio/health-attendance:nigeria-go-deep-3df8cd8
       - egovio/service-request-db:v1.2.0-01c2b65440-4
-      - egovio/health-muster-roll:master-89c74d7
-      - egovio/health-expense:master-89c74d7
-      - egovio/health-expense-calculator:master-89c74d7
-      - egovio/payments-ui:master-507e034
-      - egovio/pdf-service:multiarch-master-99a308d
+      - egovio/health-muster-roll:nigeria-go-deep-c562cdf
+      - egovio/health-expense:nigeria-go-deep-payments-expense-15b5a23
+      - egovio/health-expense-calculator:nigeria-go-deep-3fa1c21
+      - egovio/payments-ui:master-7f592bd
+      - egovio/pdf-service:central-instance-pdf-7b3064f
       - egovio/beneficiary-idgen:master-eb25d83
       - inbox:inbox-workflow-fix-b6205e2
+      - egovio/egov-notification-push:master-nigeria-finalpull-bf650e1
+      - egovio/health-notification-service:master-nigeria-finalpull-bf650e1
+      - egovio/worker-registry:master-nigeria-go-deep-2-2a12aa3
   - name: m_hcmconsole
     dependencies:
       - "backbone"
@@ -108,10 +111,11 @@ modules:
       - "m-health"
       - "m_hcm_microplanning"
     services:
-      - egovio/project-factory-db:master-aa57e79
-      - egovio/workbench-ui:master-e20f66d
-      - egovio/excel-ingestion-db:master-25a90a3
+      - egovio/project-factory:nigeria-go-deep-2-7c8765e
+      - egovio/workbench-ui:master-f9e5862
+      - egovio/excel-ingestion:master-nigeria-finalpull-c9fe5d1
       - egovio/boundary-management:master-aa57e79
+      - airflow-trigger-service:master-nigeria-go-deep-2-19579e5
   - name: m_hcm_microplanning
     dependencies:
       - "backbone"
