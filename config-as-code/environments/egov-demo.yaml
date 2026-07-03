@@ -44,6 +44,7 @@ cluster-configs:
                 kibana-host: "http://kibana-v1.es-upgrade:5601/"
                 kafka-tenant-id-pattern: ""
                 state-schema-index-position-tenantid: "0"
+                state-level-tenantid-length: "1"
 
         egov-service-host:
             namespace: [ egov, es-cluster, monitoring ]
