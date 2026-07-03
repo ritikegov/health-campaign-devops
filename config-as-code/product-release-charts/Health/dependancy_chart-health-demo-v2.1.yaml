@@ -25,7 +25,7 @@ modules:
       - egovio/egov-enc-service-db:central-instance-e346023dcb-26
       - egovio/egov-localization-db:DIGIT-2.9-LTS-237578ce80-10
       - egovio/egov-idgen:DIGIT-2.9-LTS-07f47790b8-8
-      - egovio/egov-filestore:DIGIT-2.9-LTS-237578ce80-14
+      - egovio/egov-filestore:master-filestore-fix-5e0acbc
       - egovio/egov-indexer-db:2.9.1-c781a2f714-65
       - egovio/egov-notification-mail:DIGIT-2.9-LTS-07f47790b8-5
       - egovio/egov-notification-sms:DIGIT-2.9-LTS-07f47790b8-7
