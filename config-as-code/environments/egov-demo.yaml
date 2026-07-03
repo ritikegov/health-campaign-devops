@@ -45,6 +45,7 @@ cluster-configs:
                 kafka-tenant-id-pattern: ""
                 state-schema-index-position-tenantid: "0"
                 state-level-tenantid-length: "1"
+                redis-host: "redis.backbone"
 
         egov-service-host:
             namespace: [ egov, es-cluster, monitoring ]
@@ -802,10 +803,7 @@ health-expense-calculator:
   report-date-time-format: "dd/MM/yyyy HH:mm:ss z"
   is-attendance-approval-required: "true"
   register-batch-size: 15
-  bill-generation-async-enabled: "true"
-  bill-generation-async-topic: "bill-generation-async-topic"
   egov-musterroll-search-endpoint: "/health-muster-roll/v1/_search"
-  billing-frequency-custom-minimum-days: 1
   excell-state-level-tenant-id: "mz"
   report-error-queue-topic: report-error-queue-topic
   report-retry-queue-topic: report-retry-queue-topic

@@ -100,8 +100,8 @@ modules:
       - egovio/pdf-service:central-instance-pdf-7b3064f
       - egovio/beneficiary-idgen:master-eb25d83
       - inbox:inbox-workflow-fix-b6205e2
-      - egovio/egov-notification-push:master-nigeria-finalpull-bf650e1
-      - egovio/health-notification-service:master-nigeria-finalpull-bf650e1
+      - egovio/egov-notification-push:master-7f8a6b8
+      - egovio/health-notification-service:master-7f8a6b8
       - egovio/worker-registry:master-nigeria-go-deep-2-2a12aa3
   - name: m_hcmconsole
     dependencies:
