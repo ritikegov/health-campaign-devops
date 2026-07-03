@@ -140,6 +140,8 @@ env: |
         key: project
   - name: EGOV_SEARCH_PROJECT_FACILITY_URL
     value: "/project/facility/v1/_search"
+  - name: EGOV_USER_INTEGRATION_ENABLED
+    value: "true"
   - name: EGOV_USER_HOST
     valueFrom:
       configMapKeyRef:
@@ -153,8 +155,6 @@ env: |
     value: "/user/_search"
   - name: EGOV.UPDATE.USER.URL
     value: "/_updatenovalidate"
-  - name: EGOV.USER.INTEGRATION.ENABLED
-    value: "true"
   - name: EGOV_MDMS_HOST
     valueFrom:
       configMapKeyRef:
@@ -168,5 +168,6 @@ env: |
     value: "/mdms-v2/v1/_search"
   - name: EGOV.MDMS.MASTER.NAME
   - name: EGOV.MDMS.MASTER.NAME
+    value: ""
   - name: EGOV.MDMS.INTEGRATION.ENABLED
     value: "false"
