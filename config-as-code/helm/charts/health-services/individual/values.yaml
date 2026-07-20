@@ -72,7 +72,7 @@ env: |
   - name: EGOV_BENEFICIARY_IDGEN_INTEGRATION_ENABLED
     value: "true"
   - name: INDIVIDUAL_BENEFICIARY_ID_VALIDATION_ENABLED
-    value: "true"
+    value: "false"
   - name: IDGEN.INDIVIDUAL.ID.FORMAT
     value: "individual.id"
   - name: SPRING_REDIS_HOST

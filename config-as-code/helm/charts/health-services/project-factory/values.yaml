@@ -275,7 +275,9 @@ env: |
     value: {{ .Values.dbSsl | default "true" | quote }}
   - name: DB_SCHEMA
     value: {{ .Values.namespace | default "public" }}
-  - name: SPLIT_BOUNDARIES_ON_LENGTH 
+  - name: SPLIT_BOUNDARIES_ON
+    value: {{ .Values.splitBoundariesOn | default "District" }}
+  - name: SPLIT_BOUNDARIES_ON_LENGTH
     value: "2"
   - name: FACILITY_TAB_NAME
     value: "HCM_ADMIN_CONSOLE_FACILITIES"
@@ -581,3 +583,44 @@ env: |
     value: {{ .Values.hrmsSearchByUsernameBatchSize | default "50" | quote }}
   - name: HTTP_TIMEOUT_MS
     value: {{ .Values.httpTimeoutMs | default "300000" | quote }}
+  - name: BOUNDARY_SYNC_RETRY_DELAY_MS
+    value: {{ .Values.boundarySyncRetryDelayMs | default "4000" | quote }}
+  - name: USER_KAFKA_PRODUCE_WINDOW_SIZE
+    value: {{ .Values.userKafkaProduceWindowSize | default "100" | quote }}
+  - name: KAFKA_CONSUMER_MAX_CONCURRENT
+    value: {{ .Values.kafkaConsumerMaxConcurrent | default "5" | quote }}
+  # --- master branch---
+  # Bulk project create is OPT-IN: PROJECT_BULK_CREATE_CHUNK_SIZE=0 keeps the classic per-node path; set > 0 to enable.
+  - name: PROJECT_BULK_CREATE_CHUNK_SIZE
+    value: {{ .Values.projectBulkCreateChunkSize | default "0" | quote }}
+  - name: PROJECT_BULK_CREATE_CONCURRENCY
+    value: {{ .Values.projectBulkCreateConcurrency | default "5" | quote }}
+  - name: PROJECT_SEARCH_PAGE_SIZE
+    value: {{ .Values.projectSearchPageSize | default "100" | quote }}
+  - name: PROJECT_CONFIRM_RETRIES
+    value: {{ .Values.projectConfirmRetries | default "15" | quote }}
+  - name: PROJECT_CONFIRM_POLL_INTERVAL_MS
+    value: {{ .Values.projectConfirmPollIntervalMs | default "2000" | quote }}
+  - name: PROJECT_CREATE_PACE_DELAY_MS
+    value: {{ .Values.projectCreatePaceDelayMs | default "0" | quote }}
+  - name: USER_WORKER_CREATE_BATCH_LAG
+    value: {{ .Values.userWorkerCreateBatchLag | default "2" | quote }}
+  - name: MAPPING_BULK_CREATE_CHUNK_SIZE
+    value: {{ .Values.mappingBulkCreateChunkSize | default "100" | quote }}
+  # STAFF_MAPPING_BULK gates bulk staff-mapping create (accepts "1"/"true"); default off.
+  - name: STAFF_MAPPING_BULK
+    value: {{ .Values.staffMappingBulk | default "false" | quote }}
+  - name: MAPPING_BULK_CONFIRM_POLL_INTERVAL_MS
+    value: {{ .Values.mappingBulkConfirmPollIntervalMs | default "2000" | quote }}
+  - name: MAPPING_BULK_CONFIRM_MAX_ATTEMPTS
+    value: {{ .Values.mappingBulkConfirmMaxAttempts | default "5" | quote }}
+  - name: EGOV_PROJECT_STAFF_BULK_CREATE_PATH
+    value: {{ .Values.egovProjectStaffBulkCreatePath | default "health-project/staff/v1/bulk/_create" }}
+  - name: EGOV_PROJECT_RESOURCE_BULK_CREATE_PATH
+    value: {{ .Values.egovProjectResourceBulkCreatePath | default "health-project/resource/v1/bulk/_create" }}
+  - name: EGOV_PROJECT_FACILITY_BULK_CREATE_PATH
+    value: {{ .Values.egovProjectFacilityBulkCreatePath | default "health-project/facility/v1/bulk/_create" }}
+  - name: USER_KAFKA_PRODUCE_WINDOW_DELAY_MS
+    value: {{ .Values.userKafkaProduceWindowDelayMs | default "1000" | quote }}
+  - name: USER_SEARCH_CONCURRENCY
+    value: {{ .Values.userSearchConcurrency | default "10" | quote }}

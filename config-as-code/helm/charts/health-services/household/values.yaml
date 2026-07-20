@@ -129,3 +129,5 @@ env: |
     value: "/boundary-service/boundary/_search"
   - name: EGOV_BOUNDARY_HIERARCHY_NAME
     value: "ADMIN"
+  - name: HOUSEHOLD.MEMBER.RELATIONSHIP.VALIDATION
+    value: "false"

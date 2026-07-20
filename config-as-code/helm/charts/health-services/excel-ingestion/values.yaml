@@ -150,12 +150,22 @@ env: |
     value: {{ index .Values "egov-excel-sheet-zoom" | default "90" | quote }}
   - name: EGOV_EXCEL_VALIDATION_ERROR_COLOR
     value: {{ index .Values "egov-excel-validation-error-color" | default "#ff0000" | quote }}
+  - name: EGOV_EXCEL_JOIN_MODE_SHEET_PROTECTION_ENABLED
+    value: {{ index .Values "egov-excel-join-mode-sheet-protection-enabled" | default "false" | quote }}
+  - name: EGOV_EXCEL_IMMUTABLE_REJECT_ON_CHANGE
+    value: {{ index .Values "egov-excel-immutable-reject-on-change" | default "true" | quote }}
+  - name: EGOV_EXCEL_USAGE_VALUE_VALIDATION_ENABLED
+    value: {{ index .Values "egov-excel-usage-value-validation-enabled" | default "true" | quote }}
+  - name: EGOV_EXCEL_BOUNDARY_SELECTION_VALIDATION_ENABLED
+    value: {{ index .Values "egov-excel-boundary-selection-validation-enabled" | default "true" | quote }}
   - name: EGOV_CAMPAIGN_DATA_SEARCH_PATH
     value: "project-factory/v1/data/campaign/_search"
   - name: EGOV_CAMPAIGN_CRYPTO_BULK_DECRYPT_PATH
     value: "project-factory/v1/crypto/_bulkDecrypt"
   - name: EGOV_HEALTH_INDIVIDUAL_SEARCH_PATH
     value: "individual/v1/_search"
+  - name: EGOV_EXCEL_USER_SEARCH_PARALLEL_CALLS
+    value: {{ index .Values "egov-excel-user-search-parallel-calls" | default "20" | quote }}
   - name: EGOV_HIERARCHY_SEARCH_URL
     value: "boundary-service/boundary-hierarchy-definition/_search"
   - name: EGOV_BOUNDARY_RELATIONSHIP_SEARCH_URL
@@ -246,6 +256,9 @@ env: |
     value: {{ index .Values "excel-ingestion-consumer-session-timeout-ms" | default "120000" | quote }}
   - name: EXCEL_INGESTION_GENERATION_ROW_WAIT_TIMEOUT_MS
     value: {{ index .Values "excel-ingestion-generation-row-wait-timeout-ms" | default "10000" | quote }}
+  # Listener watchdog: restart any zombie Kafka listener container on this interval.
+  - name: EXCEL_INGESTION_LISTENER_WATCHDOG_INTERVAL_MS
+    value: {{ index .Values "excel-ingestion-listener-watchdog-interval-ms" | default "60000" | quote }}
   # Flyway Configuration
   - name: FLYWAY_USER
     valueFrom:

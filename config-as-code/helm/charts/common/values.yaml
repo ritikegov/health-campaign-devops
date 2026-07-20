@@ -260,7 +260,7 @@ extraEnv:
       - name: STATE_LEVEL_TENANTID_LENGTH
         value: "1"            
       - name: IS_ENVIRONMENT_CENTRAL_INSTANCE
-        value: "false"
+        value: {{ index .Values "central-instance-enabled" | default false | quote }}
       - name: STATE_SCHEMA_INDEX_POSITION_TENANTID
         value: "0"
             
