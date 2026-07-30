@@ -21,36 +21,36 @@ modules:
       - "authn-authz"
       - "frontend"
     services:
-      - egovio/egov-accesscontrol:DIGIT-2.9-LTS-237578ce80-10
-      - egovio/egov-enc-service-db:central-instance-e346023dcb-26
-      - egovio/egov-localization-db:DIGIT-2.9-LTS-237578ce80-10
-      - egovio/egov-idgen:DIGIT-2.9-LTS-07f47790b8-8
-      - egovio/egov-filestore:master-filestore-fix-5e0acbc
-      - egovio/egov-indexer-db:2.9.1-c781a2f714-65
+      - egovio/egov-accesscontrol:master-1e8d2bb
+      - egovio/egov-enc-service-db:central-instance-tracerNew-eb7ff05
+      - egovio/egov-localization-db:redis-localization-key-5c0a4c4
+      - egovio/egov-idgen:2.9-LTS-IDgen-mdmsDatacache-bd2b4f1
+      - egovio/egov-filestore:master-1e8d2bb
+      - egovio/egov-indexer-db:master-1e8d2bb
       - egovio/egov-notification-mail:DIGIT-2.9-LTS-07f47790b8-5
       - egovio/egov-notification-sms:DIGIT-2.9-LTS-07f47790b8-7
       - egovio/egov-otp:central-instance-a0fc793059-8
-      - egovio/egov-persister:DIGIT-2.9-LTS-07f47790b8-8
+      - egovio/egov-persister:master-perf-fe334d2
       ## - egovio/egov-url-shortening:v1.1.2-1715164454-3 not used in health now
-      - egovio/egov-user:central-instance-70f75d2a82-77
+      - egovio/egov-user:user-bulk-upgrade-960226f
       - egovio/user-otp:v2.9.0-063968adc7-25
       - egovio/egov-workflow-v2-db:central-instance-1248cc50e5-38
-      - egovio/audit-service:DIGIT-2.9-LTS-07f47790b8-12
+      - egovio/audit-service:master-1e8d2bb
       - egovio/error-handler:master-impel-dump-a28582d
       - egovio/playground:2.0
-      - egovio/mdms-v2:central-instance-6fae5fdefc-96
-      - egovio/boundary-service:master-1e8d2bb
+      - egovio/mdms-v2:central-instance-tracerNew-eb7ff05
+      - egovio/boundary-service:master-perf-ad568fb
   - name: business
     dependencies:
       - "core"
     services:
-      - egovio/egov-hrms:master-5f6032a
+      - egovio/egov-hrms:master-bulk-user-create-update-577ac93
   - name: frontend
     dependencies:
       - "business"
     services:
-      - egovio/digit-ui:health-dashboard-digit-ui-8a3b8bbd1b-850
-      - egovio/dashboard-ui:master-2a437fe
+      - egovio/digit-ui:feature-sso-dev-multiarch-eb9bc14cc2-454
+      - egovio/dashboard-ui:master-64fddde
   - name: m_pgr             #PGR
     dependencies:
       - "core"
@@ -64,7 +64,7 @@ modules:
       - "business"
     services:
       - egovio/dashboard-ingest:v1.1.4-72f8a8f87b-10
-      - egovio/dashboard-analytics:analytics-es8-auth-nigeria-finalpull-5f98d99
+      - egovio/dashboard-analytics:analytics-raw-response-transform-5f98d99
       - egovio/dss-dashboard:v1.8.0-0d70d60e63-53
   - name: Other
     dependencies:
@@ -83,26 +83,26 @@ modules:
       - "frontend"
       - "m_hcmconsole"
     services:
-      - egovio/facility:master-eb25d83
-      - egovio/product:master-eb25d83
-      - egovio/individual:master-nigeria-finalpull-cc46e8c
-      - egovio/transformer:HDDF-1277-8d30a8e
-      - egovio/stock:nigeria-go-deep-2-97ed978
-      - egovio/household:master-61631c4
-      - egovio/project:master-nigeria-finalpull-cc46e8c
-      - egovio/referralmanagement:master-nigeria-finalpull-41dfa34
-      - egovio/health-attendance:nigeria-go-deep-3df8cd8
-      - egovio/service-request-db:v1.2.0-01c2b65440-4
-      - egovio/health-muster-roll:nigeria-go-deep-c562cdf
-      - egovio/health-expense:nigeria-go-deep-payments-expense-15b5a23
-      - egovio/health-expense-calculator:nigeria-go-deep-3fa1c21
-      - egovio/payments-ui:master-7f592bd
+      - egovio/facility:master-perf-2d35084
+      - egovio/product:master-perf-2d35084
+      - egovio/individual:master-bulk-user-create-update-577ac93
+      - egovio/transformer:HDDF-5226-ERROR-CATCH-acbd7ef
+      - egovio/stock:master-perf-2d35084
+      - egovio/household:master-perf-2d35084
+      - egovio/project:master-perf-ea56eb0
+      - egovio/referralmanagement:master-perf-2d35084
+      - egovio/health-attendance:master-cdc5957
+      - egovio/service-request-db:master-7f8a6b8
+      - egovio/health-muster-roll:master-cdc5957
+      - egovio/health-expense:master-cdc5957
+      - egovio/health-expense-calculator:master-cdc5957
+      - egovio/payments-ui:master-f01fe0f
       - egovio/pdf-service:central-instance-pdf-7b3064f
       - egovio/beneficiary-idgen:master-eb25d83
       - inbox:inbox-workflow-fix-b6205e2
       - egovio/egov-notification-push:master-7f8a6b8
-      - egovio/health-notification-service:master-7f8a6b8
-      - egovio/worker-registry:master-nigeria-go-deep-2-2a12aa3
+      - egovio/health-notification-service:master-perf-2d35084
+      - egovio/worker-registry:master-perf-1de0742
   - name: m_hcmconsole
     dependencies:
       - "backbone"
@@ -111,10 +111,10 @@ modules:
       - "m-health"
       - "m_hcm_microplanning"
     services:
-      - egovio/project-factory:nigeria-go-deep-2-7c8765e
-      - egovio/workbench-ui:master-f9e5862
-      - egovio/excel-ingestion:master-nigeria-finalpull-c9fe5d1
-      - egovio/boundary-management:master-aa57e79
+      - egovio/project-factory:master-perf-checklist-clone-3cc3f79
+      - egovio/workbench-ui:master-96454c7
+      - egovio/excel-ingestion:master-perf-attendance-41bfe20
+      - egovio/boundary-management:master-perf-ea56eb0
       - airflow-trigger-service:master-nigeria-go-deep-2-19579e5
   - name: m_hcm_microplanning
     dependencies:
