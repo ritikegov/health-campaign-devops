@@ -175,6 +175,8 @@ env: |
     value: project/resource/v1/_create
   - name: EGOV_PROJECT_RESOURCE_FACILITY_PATH
     value: project/facility/v1/_create
+  - name: EGOV_PROJECT_RESOURCE_SEARCH_PATH
+    value: project/resource/v1/_search
   - name: EGOV_USER_SEARCH_PATH
     value: user/_search
   - name: EGOV_FACILITY_SEARCH_PATH
@@ -615,11 +617,11 @@ env: |
   - name: MAPPING_BULK_CONFIRM_MAX_ATTEMPTS
     value: {{ .Values.mappingBulkConfirmMaxAttempts | default "5" | quote }}
   - name: EGOV_PROJECT_STAFF_BULK_CREATE_PATH
-    value: {{ .Values.egovProjectStaffBulkCreatePath | default "health-project/staff/v1/bulk/_create" }}
+    value: {{ .Values.egovProjectStaffBulkCreatePath | default "project/staff/v1/bulk/_create" }}
   - name: EGOV_PROJECT_RESOURCE_BULK_CREATE_PATH
-    value: {{ .Values.egovProjectResourceBulkCreatePath | default "health-project/resource/v1/bulk/_create" }}
+    value: {{ .Values.egovProjectResourceBulkCreatePath | default "project/resource/v1/bulk/_create" }}
   - name: EGOV_PROJECT_FACILITY_BULK_CREATE_PATH
-    value: {{ .Values.egovProjectFacilityBulkCreatePath | default "health-project/facility/v1/bulk/_create" }}
+    value: {{ .Values.egovProjectFacilityBulkCreatePath | default "project/facility/v1/bulk/_create" }}
   - name: USER_KAFKA_PRODUCE_WINDOW_DELAY_MS
     value: {{ .Values.userKafkaProduceWindowDelayMs | default "1000" | quote }}
   - name: USER_SEARCH_CONCURRENCY
