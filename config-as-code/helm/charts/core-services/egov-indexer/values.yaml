@@ -26,6 +26,7 @@ image:
   repository: "egov-indexer"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/egov-indexer/health"
   readinessProbePath: "/egov-indexer/health"

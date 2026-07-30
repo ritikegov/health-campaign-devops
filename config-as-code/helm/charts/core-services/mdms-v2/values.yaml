@@ -21,6 +21,7 @@ image:
   repository: "mdms-v2"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/mdms-v2/health"
   readinessProbePath: "/mdms-v2/health"

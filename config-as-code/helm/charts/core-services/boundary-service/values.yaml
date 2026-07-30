@@ -21,6 +21,7 @@ image:
   repository: "boundary-service"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/boundary-service/health"
   readinessProbePath: "/boundary-service/health"

@@ -33,6 +33,7 @@ image:
   repository: "zuul"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/health"
   readinessProbePath: "/health"

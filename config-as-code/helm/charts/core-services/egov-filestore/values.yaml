@@ -21,6 +21,7 @@ image:
   repository: "egov-filestore"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/filestore/health"
   readinessProbePath: "/filestore/health"

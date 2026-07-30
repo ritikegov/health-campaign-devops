@@ -22,6 +22,7 @@ image:
   repository: "individual"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/individual/health"
   readinessProbePath: "/individual/health"

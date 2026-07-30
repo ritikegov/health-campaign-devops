@@ -17,6 +17,7 @@ image:
   repository: "egov-accesscontrol"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/access/health"
   readinessProbePath: "/access/health"

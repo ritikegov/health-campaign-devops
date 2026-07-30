@@ -22,6 +22,7 @@ image:
   repository: "household"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/household/health"
   readinessProbePath: "/household/health"

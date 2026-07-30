@@ -37,6 +37,7 @@ image:
   repository: "egov-user"
 replicas: "2"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/user/health"
   readinessProbePath: "/user/health"

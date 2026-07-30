@@ -15,6 +15,7 @@ image:
   repository: "egov-persister"
 replicas: "1"
 healthChecks:
+  startupProbeEnabled: true
   enabled: true
   livenessProbePath: "/common-persist/health"
   readinessProbePath: "/common-persist/health"
