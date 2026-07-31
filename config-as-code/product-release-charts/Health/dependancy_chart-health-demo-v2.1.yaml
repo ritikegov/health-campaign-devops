@@ -112,7 +112,7 @@ modules:
       - "m_hcm_microplanning"
     services:
       - egovio/project-factory:master-perf-checklist-clone-3cc3f79
-      - egovio/workbench-ui:master-96454c7
+      - egovio/workbench-ui:master-07a4c3e
       - egovio/excel-ingestion:master-perf-attendance-41bfe20
       - egovio/boundary-management:master-perf-ea56eb0
       - airflow-trigger-service:master-nigeria-go-deep-2-19579e5
