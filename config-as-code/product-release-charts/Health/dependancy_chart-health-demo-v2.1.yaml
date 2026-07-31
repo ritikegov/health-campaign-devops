@@ -50,7 +50,7 @@ modules:
       - "business"
     services:
       - egovio/digit-ui:feature-sso-dev-multiarch-eb9bc14cc2-454
-      - egovio/dashboard-ui:master-64fddde
+      - egovio/dashboard-ui:master-07a4c3e
   - name: m_pgr             #PGR
     dependencies:
       - "core"
@@ -98,7 +98,7 @@ modules:
       - egovio/health-expense-calculator:master-cdc5957
       - egovio/payments-ui:master-f01fe0f
       - egovio/pdf-service:central-instance-pdf-7b3064f
-      - egovio/beneficiary-idgen:master-eb25d83
+      - egovio/beneficiary-idgen:beneficiary-idgen-central-instance-a8d144a
       - inbox:inbox-workflow-fix-b6205e2
       - egovio/egov-notification-push:master-7f8a6b8
       - egovio/health-notification-service:master-perf-2d35084
@@ -113,7 +113,7 @@ modules:
     services:
       - egovio/project-factory:master-perf-checklist-clone-3cc3f79
       - egovio/workbench-ui:master-07a4c3e
-      - egovio/excel-ingestion:master-perf-attendance-41bfe20
+      - egovio/excel-ingestion:master-perf-ff9bed1
       - egovio/boundary-management:master-perf-ea56eb0
       - airflow-trigger-service:master-nigeria-go-deep-2-19579e5
   - name: m_hcm_microplanning
