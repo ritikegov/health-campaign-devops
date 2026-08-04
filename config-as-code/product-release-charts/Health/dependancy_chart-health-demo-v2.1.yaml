@@ -50,7 +50,7 @@ modules:
       - "business"
     services:
       - egovio/digit-ui:feature-sso-dev-multiarch-eb9bc14cc2-454
-      - egovio/dashboard-ui:master-07a4c3e
+      - egovio/dashboard-ui:master-11a0d73
   - name: m_pgr             #PGR
     dependencies:
       - "core"
@@ -99,7 +99,7 @@ modules:
       - egovio/payments-ui:master-f01fe0f
       - egovio/pdf-service:central-instance-pdf-7b3064f
       - egovio/beneficiary-idgen:beneficiary-idgen-central-instance-a8d144a
-      - inbox:inbox-workflow-fix-b6205e2
+      - inbox:v1.4.0-bd52511479-19
       - egovio/egov-notification-push:master-7f8a6b8
       - egovio/health-notification-service:master-perf-2d35084
       - egovio/worker-registry:master-perf-1de0742
@@ -112,10 +112,10 @@ modules:
       - "m_hcm_microplanning"
     services:
       - egovio/project-factory:master-perf-checklist-clone-3cc3f79
-      - egovio/workbench-ui:master-07a4c3e
-      - egovio/excel-ingestion:master-perf-ff9bed1
+      - egovio/workbench-ui:master-e03f5ab
+      - egovio/excel-ingestion:master-perf-excel-validation-fix-c011de2
       - egovio/boundary-management:master-perf-ea56eb0
-      - airflow-trigger-service:master-nigeria-go-deep-2-19579e5
+      - airflow-trigger-service:HCMPRE-4161-airflowTrigger-1dbd349
   - name: m_hcm_microplanning
     dependencies:
       - "backbone"
@@ -127,4 +127,4 @@ modules:
       - plan-service:v1.0.2-0ea4104b4b-303
       - resource-generator:v1.0.2-b8bfac27c7-142
       - census-service:v1.0.1-ddae2629dc-105
-      - microplan-ui:v0.4.0-503b2e90fd-142
+      - microplan-ui:master-88c8318
