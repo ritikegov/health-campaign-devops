@@ -1,67 +1,61 @@
-# HCM 2.1 seed data (tenant `mz`)
+# HCM 2.1 seed data (tenant `mz`) — sourced from hcm-demo
 
-This bundle carries the runtime data that the HCM 2.1 install needs **beyond**
-the Helm charts and service config — the data that otherwise lives only in a
-running cluster's databases. Hand it over **with** the devops/config repo changes
-so a fresh one-click install reproduces a working environment without any manual
-cluster surgery.
+This bundle carries the runtime data a fresh HCM 2.1 one-click install needs **beyond** the Helm charts
+and service config. The authoritative files are **exported from the hcm-demo reference environment
+(tenant `demo`) and rewritten to tenant `mz`** (demo→mz), so a fresh install reproduces demo.
 
-Everything is **idempotent** (`INSERT ... WHERE NOT EXISTS`, update-if-changed,
-`DROP NOT NULL`), so re-applying is safe.
+## Authoritative demo-sourced files (applied by `apply.sh`)
 
-## What each file seeds
+| File | Rows | Source | Notes |
+|---|---|---|---|
+| `19-demo-mdms-schema-def-mz.sql` | 311 | demo `eg_mdms_schema_definition` | MDMS schema defs; apply first |
+| `21-demo-mdms-data-mz.sql` | 6,573 | demo `eg_mdms_data` | ALL MDMS masters (access control, project types, targetConfigs, adminSchema, ChecklistTemplates, service registry, …). Excludes runtime-generated `FormConfig`/`TransformedFormConfig`/`AppConfigCache`/`AppFlowConfig`. |
+| `22-demo-products-mz.sql` | 109 products + 99 variants | demo `product` + `product_variant` | The product catalogue campaigns reference (incl. CO-DELIVERY's `PVAR-2026-07-06-000909/910`). |
+| `20-demo-localization-mz.sql` | 79,631 | demo localization API | 25 reusable UI-label modules × en/pt/fr_MZ. Excludes boundary-name, per-campaign (`CMP-*`), DSS-data and `hcm-base-*` DATA (pollution). |
 
-| File | Contents | DB |
-|---|---|---|
-| `01-mdms.sql` | MDMS master data: HCM admin console (Hierarchy/Admin/Drawer/ReadMe configs), service registry, PGR, expense, attendance, notification. **SSO rows excluded** (see #08). | mdms-v2 (`eg_mdms_data`, `eg_mdms_schema_definition`) |
-| `02-accesscontrol.sql` | Roles, actions, roleactions — grants the UI cards/menus incl. **PGR-ADMIN** (Complaints) and **HRMS_ADMIN** (User Management). | egov-accesscontrol / mdms |
-| `03-workflow.sql` | `businessservice` workflow definitions. | egov-workflow |
-| `04-pgr.sql` | PGR (complaints) service config. | mdms / pgr |
-| `05-localization.sql` | `en_MZ` / `pt_MZ` / `fr_MZ` UI messages. | egov-localization |
-| `06-hierarchyschema-handover.sql` | Repoints the `campaign` HierarchySchema row `ADMIN → HANDOVER` (COUNTRY..VILLAGE) so **campaign template generation** works. | mdms-v2 |
-| `07-project-department-nullable.sql` | Makes `project.department` nullable so departmentless campaign projects persist. *(Belongs in the project-service Flyway migration — see note in file.)* | project |
-| `08-sso-identityproviders.TEMPLATE.sql` | **Template only.** OIDC/SSO providers are environment-specific (per-env OAuth clientId + URLs); fill placeholders per environment. Skip if not using SSO. | mdms-v2 |
+Still needed for the non-MDMS/non-product/non-localization parts (kept as-is, hand-built):
+`03-workflow.sql` (eg_wf_* business services), `04-pgr.sql` (PGR + departments), `06-hierarchyschema-handover.sql`
+(campaign HierarchySchema repoint — largely redundant now that 21 carries HierarchySchema), `07-project-department-nullable.sql`
+(project.department ALTER), `08-sso-identityproviders.TEMPLATE.sql` (SSO, environment-specific template).
 
-## The HCMADMIN bootstrap user
+## Superseded (NOT applied — kept for history)
+`01-mdms`, `02-accesscontrol`, `05-localization`, `09-project-types-active`, `10-localization-ui-labels-mirror`,
+`11-mdms-adminschema-checklist-mirror`, `12-localization-labels-full-mirror` — all replaced by the complete
+demo-sourced `19`/`20`/`21`.
 
-The HCM console admin (`HCMADMIN`, tenant `mz`, roles BOUNDARY_MANAGER,
-SUPERUSER, HRMS_ADMIN, PGR-ADMIN, CAMPAIGN_MANAGER) is seeded **declaratively**,
-not by SQL — see `charts/core-services/egov-user/templates/hcmadmin-seed-job.yaml`
-(a post-install Helm hook). Enable it with `hcmSeed.enabled=true` after creating
-the password secret:
+## demo→mz substitution applied to the demo export
+`tenantid` `demo`→`mz`; locales `en_DEMO`/`pt_DEMO`/`fr_DEMO`→`en_MZ`/`pt_MZ`/`fr_MZ`; `"demo"` value→`"mz"`;
+`demo-`→`mz-` (index/topic prefixes); `demo.`→`mz.` (schema qualifiers). English words (`demography`…) and
+mixed-case `Demo` are preserved. Verified on a throwaway Postgres: all files apply, are idempotent
+(`ON CONFLICT DO NOTHING`), and leak zero `demo`-tenant/locale rows.
 
-```
-kubectl -n egov create secret generic hcmadmin-seed --from-literal=password='<strong-pass>'
-```
-
-The login password is **never** stored in git.
+## Idempotency (per file)
+`19`/`21` `ON CONFLICT (tenantid,…) DO NOTHING`; `22` `ON CONFLICT (id) DO NOTHING`; `20`
+`ON CONFLICT (tenantid,locale,module,code) DO NOTHING`. `21` uses fresh `gen_random_uuid()` ids to avoid
+colliding with any existing row's `id`. Re-running the whole bundle is safe.
 
 ## Apply
-
 ```
 # A) direct psql
-export PGHOST=... PGPORT=5432 PGDATABASE=... PGUSER=... PGPASSWORD=...
-./apply.sh
+export PGHOST=... PGPORT=5432 PGDATABASE=... PGUSER=... PGPASSWORD=... ; ./apply.sh
 # B) pull creds from a running egov-user pod (in-cluster DB)
-export KUBECONFIG=/path/to/kubeconfig
-FROM_POD=1 ./apply.sh
+export KUBECONFIG=/path/to/kubeconfig ; FROM_POD=1 ./apply.sh
 ```
 
-Then refresh MDMS caches:
-
+### Post-apply (BOTH required)
 ```
+# 1. refresh MDMS cache
 kubectl rollout restart deploy/mdms-v2 deploy/project-factory -n egov
+# 2. bust the localization Redis cache (survives pod restarts; step 1 alone is NOT enough)
+kubectl exec -n backbone deploy/redis -- redis-cli DEL messages computedMessages
 ```
+Browsers cache localisation + the boundary tree in IndexedDB — a user seeing raw codes or a truncated
+boundary picker needs **Clear-site-data**, not a reload.
 
-## Not included (needs a live load, not a seed file)
+## Not included (by design — runtime, not seed)
+- **20k HANDOVER boundary hierarchy + data** — bulk runtime load via boundary/excel-ingestion.
+- **The 2.0-era Postman collections** — GitBook attachments on the docs site.
 
-- **20k HANDOVER boundary hierarchy + boundary data.** This is bulk runtime data
-  loaded through the boundary bulk/excel-ingestion flow, not a static SQL seed.
-  Load it post-install via the boundary upload (HANDOVER hierarchy definition +
-  the boundary workbook) once services are up.
-
-## Provenance / safety
-
-- No credentials or secrets are committed. SSO client secrets are not stored in
-  MDMS; SSO clientId/URLs are templated (#08). The HCMADMIN password comes from a
-  K8s Secret. DB creds are read at runtime by `apply.sh`, never written to disk.
+## Provenance
+Exported from hcm-demo on 2026-08-20 (`eg_mdms_data`, `eg_mdms_schema_definition`, `product`,
+`product_variant` via pgAdmin CSV; localization via demo's open `localization/messages/v1/_search`).
