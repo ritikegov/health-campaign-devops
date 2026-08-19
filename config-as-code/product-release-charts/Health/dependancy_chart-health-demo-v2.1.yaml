@@ -22,11 +22,11 @@ modules:
       - "frontend"
     services:
       - egovio/egov-accesscontrol:master-1e8d2bb
-      - egovio/egov-enc-service:central-instance-tracerNew-eb7ff05
-      - egovio/egov-localization:redis-localization-key-5c0a4c4
+      - egovio/egov-enc-service-db:central-instance-tracerNew-eb7ff05
+      - egovio/egov-localization-db:redis-localization-key-5c0a4c4
       - egovio/egov-idgen:2.9-LTS-IDgen-mdmsDatacache-bd2b4f1
       - egovio/egov-filestore:master-1e8d2bb
-      - egovio/egov-indexer:master-1e8d2bb
+      - egovio/egov-indexer-db:master-1e8d2bb
       - egovio/egov-notification-mail:DIGIT-2.9-LTS-07f47790b8-5
       - egovio/egov-notification-sms:DIGIT-2.9-LTS-07f47790b8-7
       - egovio/egov-otp:central-instance-a0fc793059-8
@@ -34,7 +34,7 @@ modules:
       ## - egovio/egov-url-shortening:v1.1.2-1715164454-3 not used in health now
       - egovio/egov-user:user-bulk-upgrade-960226f
       - egovio/user-otp:v2.9.0-063968adc7-25
-      - egovio/egov-workflow-v2:central-instance-1248cc50e5-38
+      - egovio/egov-workflow-v2-db:central-instance-1248cc50e5-38
       - egovio/audit-service:master-1e8d2bb
       - egovio/error-handler:master-impel-dump-a28582d
       - egovio/playground:2.0
@@ -92,7 +92,7 @@ modules:
       - egovio/project:master-perf-ea56eb0
       - egovio/referralmanagement:master-perf-2d35084
       - egovio/health-attendance:master-cdc5957
-      - egovio/service-request:master-7f8a6b8
+      - egovio/service-request-db:master-7f8a6b8
       - egovio/health-muster-roll:master-cdc5957
       - egovio/health-expense:master-cdc5957
       - egovio/health-expense-calculator:master-cdc5957
