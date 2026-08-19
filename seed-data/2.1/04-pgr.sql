@@ -1,4 +1,25 @@
--- 04-pgr.sql (HCM 2.1, tenant mz): PGR (complaints) service config. Idempotent.
+-- 04-pgr.sql (HCM 2.1, tenant mz): PGR (complaints) service config.
+-- Idempotent via ON CONFLICT ... DO NOTHING (76 guards). Its conflict targets
+-- (tenantid, schemacode, uniqueidentifier) and (state, businessserviceid) are the CORRECT
+-- ones, backed by real never-dropped constraints -- do NOT "align" them to 03's
+-- uuid-based WHERE NOT EXISTS style; 03 is the defective file, not this one.
+--
+-- CHANGED 2026-08-19: removed 3 junk test departments that this file would have
+-- INTRODUCED into a fresh install -- TEST_DEPT ("Test"), TEST_DEPT2 ("Test2") and
+-- TEST3 ("Test"), all createdby='dc', all isactive=true. Live mz has none of them, so
+-- they were not inherited cruft. Department rows: 29 -> 26.
+--
+-- DELIBERATELY KEPT (do not remove without a decision): 13 further Department rows with
+-- 64-char hex uniqueidentifiers and createdby='system-mdms-seed' (codes DEPT_10,
+-- DEPT_13, DEPT_35 ...; names Others, Tax Branch, Works Branch). These look like a DIGIT
+-- core seed artifact and may belong to the upstream baseline this bundle assumes, so
+-- deleting them is not a safe call to make locally.
+--
+-- KNOWN RISK, not fixed here: the eg_wf_state_v2 / eg_wf_action_v2 inserts resolve
+-- businessserviceid via the literal seed uuid 'pgr-bs-mz'. On a DB where a PGR business
+-- service already exists under a DIFFERENT uuid, the businessservice insert DO-NOTHINGs
+-- and the dependent state inserts then violate fk_eg_wf_state (23503). Resolving the
+-- uuid with a SELECT would fix it; that is a pending change, not an oversight.
 
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('ffbec56f-8289-4e90-9a03-629b8e5a9015', 'mz', 'NMCP', 'common-masters.Department', '{"id": 1, "code": "NMCP", "name": "NMCP", "active": true, "tenantId": "mz"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '1700807986334', '1700807986334') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('d4478238-7fd6-419f-8b38-29addc617128', 'mz', 'DHI', 'common-masters.Department', '{"id": 2, "code": "DHI", "name": "DHI", "active": true, "tenantId": "mz"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '1700807996492', '1700807996492') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
@@ -13,9 +34,6 @@ INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, dat
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('4a654c9d-f998-4c8f-ba77-969f62173a81', 'mz', 'eGov', 'common-masters.Department', '{"id": 11, "code": "eGov", "name": "eGov", "active": true, "tenantId": "mz"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '1700808099138', '1700808099138') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('91c56f12-c54e-4fae-b673-4c01668c7d35', 'mz', 'MISAU', 'common-masters.Department', '{"id": 12, "code": "MISAU", "name": "MISAU", "active": true, "tenantId": "mz"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '1700808111857', '1700808111857') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('6d47bc3d-4257-4fda-bbe2-ec2bb02860ff', 'mz', 'OTHER', 'common-masters.Department', '{"id": 13, "code": "OTHER", "name": "OTHER", "active": true, "tenantId": "mz"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', '1700808120353', '1700808120353') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
-INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('b38a1898-146f-4193-bf19-fa91138f495b', 'mz', 'TEST_DEPT', 'common-masters.Department', '{"code": "TEST_DEPT", "name": "Test"}'::jsonb, 'true'::boolean, 'dc', 'dc', '1778856431521', '1778856431521') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
-INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('75b17fa3-232e-4b2f-b04a-63175ad3bd64', 'mz', 'TEST_DEPT2', 'common-masters.Department', '{"code": "TEST_DEPT2", "name": "Test2"}'::jsonb, 'true'::boolean, 'dc', 'dc', '1778856454212', '1778856454212') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
-INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('a1960ab6-c4fa-45ea-bf13-5c724821ac28', 'mz', 'TEST3', 'common-masters.Department', '{"code": "TEST3", "name": "Test"}'::jsonb, 'true'::boolean, 'dc', 'dc', '1778859256541', '1778859256541') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('28e16415-3488-4886-9d92-ab0b85b5d376', 'mz', 'CITIZEN', 'ACCESSCONTROL-ROLES.roles', '{"code": "CITIZEN", "name": "Citizen", "description": "Default role for citizens"}'::jsonb, 'true'::boolean, '0da6b089-265e-44ef-bf7f-9e0d3ef47bf9', 'bde38f23-82c5-41f5-bedf-e56a0e6c4d58', '1700735547995', '1778878781538') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('8a60966d-a38a-4068-af4f-f32f6ee3abb2', 'mz', 'e5367372f16225688160bfe165c369b01d7953ba5185b750a948176eece45199', 'common-masters.Department', '{"code": "DEPT_10", "name": "Others", "active": true}'::jsonb, 'true'::boolean, 'system-mdms-seed', 'system-mdms-seed', '1766039437780', '1766039437780') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
 INSERT INTO public.eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('57b4d3b1-e273-476e-b1e8-c1ef29f6fd73', 'mz', '0e8a47c93e4dbfde067de263b0338894fbb9191bf6ac42b1f4391070273af040', 'common-masters.Department', '{"code": "DEPT_13", "name": "Tax Branch", "active": true}'::jsonb, 'true'::boolean, 'system-mdms-seed', 'system-mdms-seed', '1766039437780', '1766039437780') ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;

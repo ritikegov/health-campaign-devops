@@ -1,5 +1,24 @@
 -- 02-accesscontrol.sql (HCM 2.1, tenant mz): roles, actions, roleactions.
--- Grants the card/menu access (incl. PGR-ADMIN, HRMS_ADMIN). Idempotent.
+-- Idempotent (INSERT ... WHERE NOT EXISTS, 66 guards).
+--
+-- CORRECTED 2026-08-19: the previous header claimed this file "grants the card/menu
+-- access (incl. PGR-ADMIN, HRMS_ADMIN)". That is FALSE and has been removed -- the
+-- strings PGR-ADMIN and HRMS_ADMIN appeared only in that comment; this file contains
+-- ZERO roleaction rows for either role. Do not rely on it for those cards.
+--
+-- Also corrected 2026-08-19: 18 ACCESSCONTROL-ROLEACTIONS payloads carried the tenant
+-- value 'demo' in their embedded JSON while the row's tenantid COLUMN said 'mz' -- a leak
+-- from the demo->mz mirror pass, which rewrote columns but not payload values. All 18
+-- payload values are now 'mz'. (Wording here deliberately avoids the literal token so a
+-- grep-based pre-ship lint does not false-positive on this comment.)
+-- The key CASING is deliberately left as-is (18 rows use the lowercase key, 20 use the
+-- camelCase one): normalising it needs egov-accesscontrol read first to confirm which key
+-- it actually authorises off, and that has not been done.
+--
+-- KNOWN GAP, not fixed here: this file seeds 38 roleactions. The live demo reference
+-- carries ~929 additional (rolecode, actionid) pairs, and live mz has 2,708. A fresh
+-- install therefore gets a small subset. Closing that is a pending decision, not an
+-- oversight -- see .ai/confidence.yaml (W6).
 
 -- HCM 2.1 access-control seed (demo->mz) for testhealth-k8supgrade
 -- roles + actions + roleactions; idempotent
@@ -125,40 +144,40 @@ INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,
 SELECT '2f1bf1b7-18a1-41e2-b3dc-45987bf74b5d','mz','4117.PAYMENT_EDITOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4117","rolecode":"PAYMENT_EDITOR","tenantId":"mz","actioncode":""}'::jsonb,true,'e1c370db-8f61-4460-8bea-3b85c7373124','e1c370db-8f61-4460-8bea-3b85c7373124',1784023060943,1784023060943
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4117.PAYMENT_EDITOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '34f60872-3d5d-46d5-8944-6363ff483d08','mz','4116.DASHBOARD_VIEWER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4116","rolecode":"DASHBOARD_VIEWER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783972838155,1783972838155
+SELECT '34f60872-3d5d-46d5-8944-6363ff483d08','mz','4116.DASHBOARD_VIEWER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4116","rolecode":"DASHBOARD_VIEWER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783972838155,1783972838155
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4116.DASHBOARD_VIEWER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '1c4f5d89-5112-4ccc-9705-aa6dd70f8a61','mz','4115.DASHBOARD_VIEWER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4115","rolecode":"DASHBOARD_VIEWER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783971407475,1783971407475
+SELECT '1c4f5d89-5112-4ccc-9705-aa6dd70f8a61','mz','4115.DASHBOARD_VIEWER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4115","rolecode":"DASHBOARD_VIEWER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783971407475,1783971407475
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4115.DASHBOARD_VIEWER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
 SELECT 'f5faf159-023c-4fdb-9712-908ed02f00c8','mz','4114.CAMPAIGN_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4114","rolecode":"CAMPAIGN_MANAGER","tenantId":"mz","actioncode":""}'::jsonb,true,'e1c370db-8f61-4460-8bea-3b85c7373124','e1c370db-8f61-4460-8bea-3b85c7373124',1783953120397,1783953120397
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4114.CAMPAIGN_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'f99d9d55-9776-4d1c-8e3c-0f1b24ff6bfd','mz','4113.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933089940,1783933089940
+SELECT 'f99d9d55-9776-4d1c-8e3c-0f1b24ff6bfd','mz','4113.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933089940,1783933089940
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4113.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '38d52e4a-1e0f-4220-9743-c6cf40877bde','mz','4113.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933081626,1783933081626
+SELECT '38d52e4a-1e0f-4220-9743-c6cf40877bde','mz','4113.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933081626,1783933081626
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4113.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'a6be2a33-50e1-431b-bf18-c001beb4313b','mz','4113.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933072740,1783933072740
+SELECT 'a6be2a33-50e1-431b-bf18-c001beb4313b','mz','4113.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4113","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933072740,1783933072740
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4113.HEALTH_FACILITY_WORKER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '0adcb532-e80a-41e4-88c6-26b01d817aec','mz','4112.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933035963,1783933035963
+SELECT '0adcb532-e80a-41e4-88c6-26b01d817aec','mz','4112.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933035963,1783933035963
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4112.HEALTH_FACILITY_WORKER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'bf8093ab-705d-4adc-84a7-ed88d18ce0d5','mz','4112.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933018079,1783933018079
+SELECT 'bf8093ab-705d-4adc-84a7-ed88d18ce0d5','mz','4112.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783933018079,1783933018079
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4112.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '6433e780-5c65-417a-b3ed-1a0067dee87b','mz','4112.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932998396,1783932998396
+SELECT '6433e780-5c65-417a-b3ed-1a0067dee87b','mz','4112.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4112","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932998396,1783932998396
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4112.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '0c1ca5ff-7706-4243-9ae0-1bb3a23f5787','mz','4100.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932659539,1783932659539
+SELECT '0c1ca5ff-7706-4243-9ae0-1bb3a23f5787','mz','4100.HEALTH_FACILITY_WORKER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"HEALTH_FACILITY_WORKER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932659539,1783932659539
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4100.HEALTH_FACILITY_WORKER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'f37d3a44-fd44-4aa0-b1e4-5d7da85da948','mz','4100.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932606167,1783932606167
+SELECT 'f37d3a44-fd44-4aa0-b1e4-5d7da85da948','mz','4100.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932606167,1783932606167
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4100.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '903403b2-fb46-45ed-b715-8cd2aaace07f','mz','4100.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932580411,1783932580411
+SELECT '903403b2-fb46-45ed-b715-8cd2aaace07f','mz','4100.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4100","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783932580411,1783932580411
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4100.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
 SELECT '0e280113-f9a0-4adf-8eda-27111ebd85b8','mz','4109.DISTRICT_SUPERVISOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4109","rolecode":"DISTRICT_SUPERVISOR","tenantId":"mz","actioncode":""}'::jsonb,true,'e1c370db-8f61-4460-8bea-3b85c7373124','e1c370db-8f61-4460-8bea-3b85c7373124',1783747048291,1783747048291
@@ -167,25 +186,25 @@ INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,
 SELECT '39fb7090-364a-4d2f-b2cc-4bdd9eedc867','mz','4109.TEAM_SUPERVISOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4109","rolecode":"TEAM_SUPERVISOR","tenantId":"mz","actioncode":""}'::jsonb,true,'e1c370db-8f61-4460-8bea-3b85c7373124','e1c370db-8f61-4460-8bea-3b85c7373124',1783747036561,1783747036561
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4109.TEAM_SUPERVISOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '1233d6fc-3208-46f8-85de-3d0517b95ad9','mz','4108.CAMPAIGN_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4108","rolecode":"CAMPAIGN_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783605942746,1783605942746
+SELECT '1233d6fc-3208-46f8-85de-3d0517b95ad9','mz','4108.CAMPAIGN_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4108","rolecode":"CAMPAIGN_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783605942746,1783605942746
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4108.CAMPAIGN_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '4e8f1d8e-ffe4-4534-a4a6-c1d529766c96','mz','4107.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4107","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601073495,1783601073495
+SELECT '4e8f1d8e-ffe4-4534-a4a6-c1d529766c96','mz','4107.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4107","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601073495,1783601073495
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4107.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '3e11ce95-02be-4194-a6b7-351eb79a2aff','mz','4107.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4107","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601052359,1783601052359
+SELECT '3e11ce95-02be-4194-a6b7-351eb79a2aff','mz','4107.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4107","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601052359,1783601052359
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4107.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'b1c06f9a-483f-4776-bfdf-79a15b03bd92','mz','4106.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4106","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601033724,1783601033724
+SELECT 'b1c06f9a-483f-4776-bfdf-79a15b03bd92','mz','4106.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4106","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601033724,1783601033724
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4106.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT 'ed6a53fa-4b12-4277-b7ee-2461344f9e88','mz','4106.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4106","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601020860,1783601020860
+SELECT 'ed6a53fa-4b12-4277-b7ee-2461344f9e88','mz','4106.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4106","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783601020860,1783601020860
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4106.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '9fe812a0-ad14-4e39-8cdf-1bea6ad85b75','mz','4105.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4105","rolecode":"DISTRIBUTOR","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783600960716,1783600960716
+SELECT '9fe812a0-ad14-4e39-8cdf-1bea6ad85b75','mz','4105.DISTRIBUTOR','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4105","rolecode":"DISTRIBUTOR","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783600960716,1783600960716
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4105.DISTRIBUTOR');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
-SELECT '20fdd1d7-50d4-4ce7-917f-0fb6e75bb9e3','mz','4105.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4105","rolecode":"WAREHOUSE_MANAGER","tenantid":"demo","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783600937971,1783600937971
+SELECT '20fdd1d7-50d4-4ce7-917f-0fb6e75bb9e3','mz','4105.WAREHOUSE_MANAGER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4105","rolecode":"WAREHOUSE_MANAGER","tenantid":"mz","actioncode":""}'::jsonb,true,'3496b299-06f3-4dd2-8340-573cf8c4f1fc','3496b299-06f3-4dd2-8340-573cf8c4f1fc',1783600937971,1783600937971
 WHERE NOT EXISTS (SELECT 1 FROM eg_mdms_data WHERE tenantid='mz' AND schemacode='ACCESSCONTROL-ROLEACTIONS.roleactions' AND uniqueidentifier='4105.WAREHOUSE_MANAGER');
 INSERT INTO eg_mdms_data (id,tenantid,uniqueidentifier,schemacode,data,isactive,createdby,lastmodifiedby,createdtime,lastmodifiedtime)
 SELECT 'a0a007e0-23c1-4cf9-a50a-1ce17a2ed058','mz','4104.PAYMENT_APPROVER','ACCESSCONTROL-ROLEACTIONS.roleactions','{"actionid":"4104","rolecode":"PAYMENT_APPROVER","tenantId":"mz","actioncode":""}'::jsonb,true,'e1c370db-8f61-4460-8bea-3b85c7373124','e1c370db-8f61-4460-8bea-3b85c7373124',1783589261284,1783589261284
