@@ -210,9 +210,9 @@ env: |
   - name: EXCEL_INGESTION_SHEET_SEARCH
     value: excel-ingestion/v1/data/sheet/_search
   - name: EXCEL_INGESTION_PROCESS
-    value: {{ .Values.excelIngestionProcess | default "excel-ingestion/v1/data/_process" }} 
+    value: {{ .Values.excelIngestionProcess | default "excel-ingestion/v1/data/process/_create" }}
   - name: EXCEL_INGESTION_GENERATE
-    value: {{ .Values.excelIngestionGenerate | default "excel-ingestion/v1/data/_generate" }}
+    value: {{ .Values.excelIngestionGenerate | default "excel-ingestion/v1/data/generate/_init" }}
   - name: EXCEL_INGESTION_GENERATE_SEARCH
     value: {{ .Values.excelIngestionGenerateSearch | default "excel-ingestion/v1/data/generate/_search" }}
   - name: CMP_IDGEN_IDNAME
