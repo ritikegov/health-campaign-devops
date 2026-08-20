@@ -74,10 +74,56 @@ verbatim (confirmed by diffing the previous seed against the live source: 0 mess
 This rule was not invented — it was reverse-engineered from the previously committed seed and validated at
 **6,565/6,565 exact data matches** before being re-applied to the fresh pull.
 
-## Idempotency (per file)
-`19`/`21` `ON CONFLICT (tenantid,…) DO NOTHING`; `22` `ON CONFLICT (id) DO NOTHING`; `20`
-`ON CONFLICT (tenantid,locale,module,code) DO NOTHING`. `21` uses fresh `gen_random_uuid()` ids to avoid
-colliding with any existing row's `id`. Re-running the whole bundle is safe.
+## Idempotency and convergence (per file)
+
+| File | Conflict key | Behaviour |
+|---|---|---|
+| `19` | `(tenantid, code)` | **DO UPDATE** — definition, description, isactive, audit |
+| `20` | `(tenantid, locale, module, code)` | **DO UPDATE** — message, audit |
+| `21` | `(tenantid, schemacode, uniqueidentifier)` | **DO UPDATE** — data, isactive, audit (`id` is never updated; an existing row keeps its own, since `uk_eg_mdms_data` is `UNIQUE(id)`) |
+| `22` | `(id)` | `DO NOTHING` |
+
+`19`/`20`/`21` were `DO NOTHING` until 2026-08-20. **That was a real defect on any non-empty cluster.**
+`DO NOTHING` can add a row but can never correct one, so a tenant that already had a label or a master with
+a stale value kept it forever and could never be brought back in line with demo — re-applying the bundle
+appeared to succeed while changing nothing. Measured on testhealth against demo:
+
+- **248** localization messages differed (e.g. `CORE_LOADING` = `Loading...` locally vs `Loading` on demo)
+- **255** MDMS rows differed, including the 7 console **card-tile** definitions, which is why tiles rendered
+  with the wrong labels and in the wrong order
+
+On an **empty** database `DO UPDATE` is identical to `DO NOTHING` (there is nothing to conflict with), so
+this is safe for a fresh one-click install. Re-running the bundle is still exactly idempotent — the second
+pass rewrites the same values. Verified against a deliberately dirtied database: a stale
+`CORE_LOADING = 'Loading...'` and a stale tile `2304 = HCMCONSOLE.CREATE_CAMPAIGN` both converged to demo's
+current values on apply.
+
+> **Note the trade-off:** these files now assert demo's values. Any deliberate local customisation of a
+> seeded label or master will be overwritten on the next apply. That is intended for this bundle, whose whole
+> purpose is to mirror demo — but it is a behaviour change from previous revisions.
+
+### What `DO UPDATE` still cannot fix: surplus rows
+
+An upsert can add and correct rows; it can never **remove** one. A cluster seeded before this bundle existed
+keeps its local-only rows through every re-apply, and those render as **duplicate card tiles and duplicate
+dropdown options**. Measured on testhealth vs demo (2026-08-20):
+
+| Master | Local-only rows | Visible symptom |
+|---|---|---|
+| `ACCESSCONTROL-ACTIONS-TEST.actions-test` | 197 (e.g. the id-`5000` series) | `My campaigns` ×3, `Create campaign` ×3, `Boundary management` ×3, `Search user` ×3, `Create user` ×3, `Setup Payment Attributes` ×2 |
+| `ACCESSCONTROL-ROLEACTIONS.roleactions` | 497 | grants the surplus actions above |
+| `HCM-PROJECT-TYPES.projectTypes` | 1 | **`Co-Delivery` listed twice** in the campaign-type dropdown |
+| `HCM-ADMIN-CONSOLE.campaignTypeTemplates` | 1 (`Malaria2024`) | extra template option |
+
+Removing these requires `DELETE`, which is destructive and is **not** part of `apply.sh`. A fresh install is
+unaffected — it only ever contains demo's rows.
+
+> **Separately: demo itself has duplicate tiles.** 173 of demo's own active action rows are byte-identical
+> twins (same `displayName`, `navigationURL`, `parentModule`, `orderNumber`) that are granted to the *same*
+> role — e.g. ids `2304`+`2330` are both `HCMCONSOLE.MY_CAMPAIGNS` → `/workbench-ui/employee/campaign/my-campaign-new`,
+> both granted to `CAMPAIGN_MANAGER`. So even a perfect mirror of demo shows `My campaigns` and
+> `Boundary management` twice. Eliminating those means **diverging from demo**, which this bundle does not do
+> on its own authority.
 
 ## Apply
 ```

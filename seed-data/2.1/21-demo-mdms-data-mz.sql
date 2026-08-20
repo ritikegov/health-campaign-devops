@@ -6,7 +6,10 @@
 --   uniqueIdentifier exactly 'demo' -> 'mz'.
 --   NOT a blanket DEMO->MZ: the literal 'INSIDEMONITORING' contains 'DEMO' and must not be corrupted.
 --
--- 6284 rows. Idempotent: ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING.
+-- 6284 rows. ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO **UPDATE** (data, isactive, audit).
+--   Identical to DO NOTHING on an empty DB, so safe for a fresh install; on an existing cluster it is what
+--   lets the tenant converge on demo instead of keeping stale rows forever. `id` is deliberately NOT
+--   updated - an existing row keeps its own id (uk_eg_mdms_data is UNIQUE(id)).
 -- Fresh id per row via gen_random_uuid() - demo's own ids are not reused.
 --
 -- EXCLUDED (runtime-generated, regenerated on first use from seeded inputs):
@@ -6303,4 +6306,8 @@ INSERT INTO eg_mdms_data (id, tenantid, uniqueidentifier, schemacode, data, isac
 (gen_random_uuid()::text,'mz','Workbench','tenant.citymodule','{"code": "Workbench", "order": 13, "active": true, "module": "Workbench", "tenants": [{"code": "mz"}]}'::jsonb,true,'3927329413481398','3927329413481398',1718270615383,1718270615383),
 (gen_random_uuid()::text,'mz','mz','tenant.tenants','{"city": {"code": "mz", "name": "mz", "captcha": null, "ddrName": "ba-DDR", "latitude": 15.82223689, "ulbGrade": "KC1", "localName": null, "longitude": 78.02439864, "regionName": "KC-Region", "districtCode": "KC", "districtName": "KC1", "shapeFileLocation": null}, "code": "mz", "name": "mz", "type": "CITY", "logoId": "https://hcm-mz-assets.s3.ap-south-1.amazonaws.com/demo/egov-logo-2025.png", "address": null, "emailId": null, "imageId": "", "domainUrl": null, "twitterUrl": null, "description": "demo Corporation", "facebookUrl": null, "contactNumber": "9980770587", "helpLineNumber": "9980770587", "integrateProjectService": true}'::jsonb,true,'cfacf16d-2544-4285-9235-3bd29a547186','cfacf16d-2544-4285-9235-3bd29a547186',1781525498660,1781525914736),
 (gen_random_uuid()::text,'mz','40a528a0-4e0e-11ee-be56-0242ac120002','test.projectconfig','{"id": "40a528a0-4e0e-11ee-be56-0242ac120002", "code": "MR-DN", "name": "configuration for Multi Round Campaigns", "group": "MALARIA", "cycles": [{"deliveries": [{"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}, {"quantity": 2, "productVariantId": "PVAR-2022-12-20-000038"}], "deliveryStrategy": "DIRECT", "mandatoryWaitSinceLastDeliveryInDays": "null"}, {"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}], "deliveryStrategy": "DIRECT", "mandatoryWaitSinceLastDeliveryInDays": "10"}, {"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}], "deliveryStrategy": "INDIRECT", "mandatoryWaitSinceLastDeliveryInDays": "10"}, {"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}], "deliveryStrategy": "INDIRECT", "mandatoryWaitSinceLastDeliveryInDays": "20"}], "mandatoryWaitSinceLastCycleInDays": "null"}, {"deliveries": [{"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}, {"quantity": 2, "productVariantId": "PVAR-2022-12-20-000038"}], "deliveryStrategy": "DIRECT", "mandatoryWaitSinceLastDeliveryInDays": "15"}, {"ProductVariants": [{"quantity": 1, "productVariantId": "PVAR-2022-12-20-000037"}], "deliveryStrategy": "INDIRECT", "mandatoryWaitSinceLastDeliveryInDays": "10"}, {"ProductVariants": [{"quantity": 2, "productVariantId": "PVAR-2022-12-20-000038"}], "deliveryStrategy": "INDIRECT", "mandatoryWaitSinceLastDeliveryInDays": "20"}], "mandatoryWaitSinceLastCycleInDays": "30"}], "beneficiaryType": "HOUSEHOLD", "observationStrategy": "DOT1"}'::jsonb,true,'c73c9d67-1d41-43b0-b256-3f32ad2f5fcf','c73c9d67-1d41-43b0-b256-3f32ad2f5fcf',1701085223471,1701085223471)
-ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO NOTHING;
+ON CONFLICT (tenantid, schemacode, uniqueidentifier) DO UPDATE SET
+  data = EXCLUDED.data,
+  isactive = EXCLUDED.isactive,
+  lastmodifiedby = EXCLUDED.lastmodifiedby,
+  lastmodifiedtime = EXCLUDED.lastmodifiedtime;
