@@ -81,6 +81,19 @@ env: |
     value: "/egov-enc-service/crypto/v1/_encrypt"
   - name: EGOV_ENC_DECRYPT_ENDPOINT
     value: "/egov-enc-service/crypto/v1/_decrypt"
+  # Required by the egov-enc client to resolve WHICH tenant's security policy to load before it
+  # encrypts. Without it the policy lookup returns nothing, `attributes` is null, and every
+  # /worker/v1/_search dies with the generic "Unknown error occurred in encryption process"
+  # (NullPointerException at EncryptionServiceImpl.encryptJsonArray). That blocks campaign
+  # creation: project-factory's worker search fails -> user rows fail -> the
+  # attendanceRegisterAttendee mapping never completes -> the campaign is stuck in `creating`.
+  # Present in the demo chart (health-campaign-devops @ azure-install-hcm-demo) and previously
+  # missing here.
+  - name: EGOV_ENC_STATE_LEVEL_TENANT_IDS
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: egov-state-level-tenant-id
   - name: STATE_LEVEL_TENANT_ID
     value: {{ index .Values "state-level-tenant-id" | default "mz" | quote }}
   - name: KAFKA_TOPIC_AUDIT
