@@ -51,6 +51,11 @@ echo "   01-mdms 02-accesscontrol 05-localization 09-project-types 10-localizati
 echo "================================================================================="
 echo
 echo ">> SSO (optional): fill + apply 08-sso-identityproviders.TEMPLATE.sql per environment."
+echo ">> EXISTING clusters only (NOT needed for a fresh install): 23-align-remove-surplus.sql"
+echo ">>   19/20/21 can add and correct rows but never REMOVE one, so local-only rows seeded before this"
+echo ">>   bundle survive every re-apply and render as duplicate card tiles / dropdown options."
+echo ">>   23 deletes exactly those (rows absent on demo) for the 5 UI-driving masters. DESTRUCTIVE."
+echo ">>     psql -v ON_ERROR_STOP=1 -h \"\$PGHOST\" -p \"\${PGPORT:-5432}\" -U \"\$PGUSER\" -d \"\$PGDATABASE\" -f 23-align-remove-surplus.sql"
 echo ">> POST-APPLY (BOTH required for the seeded data to be served):"
 echo ">>   1. MDMS cache refresh:"
 echo ">>        kubectl rollout restart deploy/mdms-v2 deploy/project-factory -n egov"

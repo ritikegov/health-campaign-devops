@@ -118,6 +118,34 @@ dropdown options**. Measured on testhealth vs demo (2026-08-20):
 Removing these requires `DELETE`, which is destructive and is **not** part of `apply.sh`. A fresh install is
 unaffected — it only ever contains demo's rows.
 
+**`23-align-remove-surplus.sql`** does exactly that removal, for the 5 UI-driving masters only
+(`ACCESSCONTROL-ACTIONS-TEST.actions-test`, `ACCESSCONTROL-ROLEACTIONS.roleactions`,
+`ACCESSCONTROL-ROLES.roles`, `HCM-PROJECT-TYPES.projectTypes`,
+`HCM-ADMIN-CONSOLE.campaignTypeTemplates`). It deletes only rows whose `uniqueidentifier` is absent from
+demo's 4,802-row authoritative set, runs in one transaction, and `RAISE NOTICE`s the per-master counts
+before deleting. It deliberately does **not** touch campaign-derived masters (`HCM.WORKER_RATES`,
+`NewFormConfig`, `NewApkConfig`, …) — on a live cluster those belong to that cluster's own campaigns.
+
+```
+psql -v ON_ERROR_STOP=1 -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" -f 23-align-remove-surplus.sql
+```
+
+Verified on a throwaway PostgreSQL:
+
+| Scenario | Result |
+|---|---|
+| Fresh DB seeded only from this bundle | **exact no-op** — 0 rows removed, 6,284 → 6,284 |
+| DB pre-loaded with testhealth's 696 real surplus rows, then `21` + `23` | removed 695, converged to **exactly** demo's 6,284 |
+
+After alignment: `Setup Payment Attributes` 2→**1**, `Co-Delivery` 2→**1**, active campaign templates
+3→**2** (`Malaria2024` exists on demo but *inactive*, so file `21`'s upsert deactivates it rather than `23`
+deleting it). The remaining ×2 tiles are demo's own duplicates, retained by design.
+
+> One clause was deliberately removed from this file after testing: a "delete role-actions whose action no
+> longer exists" cleanup. **demo itself carries 143 such dangling role-actions**, so that cleanup deleted 143
+> rows from a *freshly seeded* database — diverging from demo and breaking the no-op guarantee. They grant
+> nothing and are harmless.
+
 > **Separately: demo itself has duplicate tiles.** 173 of demo's own active action rows are byte-identical
 > twins (same `displayName`, `navigationURL`, `parentModule`, `orderNumber`) that are granted to the *same*
 > role — e.g. ids `2304`+`2330` are both `HCMCONSOLE.MY_CAMPAIGNS` → `/workbench-ui/employee/campaign/my-campaign-new`,
