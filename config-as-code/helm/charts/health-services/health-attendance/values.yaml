@@ -222,3 +222,34 @@ env: |
   - name: MUSTERROLL_WORKFLOW_BUSINESS_SERVICE
     value: {{ index .Values "musterroll-workflow-business-service" | quote }}
   {{- end }}  
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: SERVER_SERVLET_CONTEXT_PATH
+    value:  "/health-attendance"
+  - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+    value: {{ index .Values "spring-kafka-consumer-group-id" | default "egov-attendance-service" | quote }}
+  - name: EGOV_MDMS_PATH
+    value: "mdms-v2/v1/_search"
+  - name: MDMS_PATH
+    value: "mdms-v2/v1/_search"
+  - name: EGOV_PROJECT_SEARCH_ENDPOINT
+    value: "project/v1/_search"
+  - name: PROJECT_MANAGEMENT_SYSTEM_KAFKA_UPDATE_TOPIC
+    value: {{ index .Values "project-management-system-kafka-update-topic" | quote}}
+  - name: ATTENDANCE_KAFKA_TENANT_ID_PATTERN
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: kafka-tenant-id-pattern
+  - name: ATTENDANCE_LOG_KAFKA_CONSUMER_BULK_CREATE_TOPIC
+    value: {{ index .Values "attendance-log-kafka-bulk-create-topic" | quote }}
+  - name: ATTENDANCE_LOG_KAFKA_CONSUMER_BULK_UPDATE_TOPIC
+    value: {{ index .Values "attendance-log-kafka-bulk-update-topic" | quote }}
+  - name: ATTENDANCE_REGISTER_KAFKA_MUSTER_STATUS_UPDATE_TOPIC
+    value: {{ index .Values "attendance-register-kafka-muster-status-update-topic" | quote }}
+
+# --- values mirrored from the demo chart (referenced by the env entries above) ---
+attendance-log-kafka-bulk-create-topic: save-attendance-log-bulk-health
+attendance-log-kafka-bulk-update-topic: update-attendance-log-bulk-health
+attendance-register-kafka-muster-status-update-topic: muster-roll-status-update
+project-management-system-kafka-update-topic: update-project

@@ -626,3 +626,11 @@ env: |
     value: {{ .Values.userKafkaProduceWindowDelayMs | default "1000" | quote }}
   - name: USER_SEARCH_CONCURRENCY
     value: {{ .Values.userSearchConcurrency | default "10" | quote }}
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV_SERVICE_DEFINITION_SEARCH_PATH
+    value: service-request/service/definition/v1/_search
+  - name: EGOV_SERVICE_DEFINITION_CREATE_PATH
+    value: service-request/service/definition/v1/_create
+  - name: BOUNDARY_MAIN_SHEET_NAME
+    value: "Boundary Data"

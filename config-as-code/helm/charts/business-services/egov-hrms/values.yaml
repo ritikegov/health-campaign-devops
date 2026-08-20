@@ -155,4 +155,8 @@ env: |
   - name: TRACER_OPENTRACING_ENABLED
     value: "true" 
   {{- end }}
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV.INDIVIDUAL.CREATE.BULK.ENDPOINT
+    value: /individual/v1/bulk/_create
   

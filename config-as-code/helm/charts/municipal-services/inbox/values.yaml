@@ -102,3 +102,10 @@ env: |
   {{- end }}
   - name: JAVA_ENABLE_DEBUG
     value: "true"
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV_STATE_LEVEL_TENANT_ID
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: egov-state-level-tenant-id

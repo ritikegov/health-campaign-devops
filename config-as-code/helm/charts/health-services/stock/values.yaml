@@ -171,3 +171,24 @@ env: |
     value: ""
   - name: EGOV.MDMS.INTEGRATION.ENABLED
     value: "false"
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV_USER_CONTEXT_PATH
+    value: "/user/users"
+  - name: EGOV_CREATE_USER_PATH
+    value: "/_createnovalidate"
+  - name: EGOV_UPDATE_USER_URL
+    value: "/_updatenovalidate"
+  - name: EGOV_MDMS_PATH_NAME
+    value: "/mdms-v2/v1/_search"
+  - name: EGOV_MDMS_MASTER_NAME
+    value: ""
+  - name: EGOV_MDMS_MODULE_NAME
+    value: ""
+  - name: EGOV_MDMS_INTEGRATION_ENABLED
+    value: "false"
+  - name: TRACER_KAFKA_MDC_ENABLED
+    value: {{ index .Values "kafka-mdc-enabled" | quote }}
+
+# --- values mirrored from the demo chart (referenced by the env entries above) ---
+kafka-mdc-enabled: "true"

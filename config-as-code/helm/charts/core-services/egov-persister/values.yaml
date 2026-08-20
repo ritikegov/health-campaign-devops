@@ -54,3 +54,9 @@ env: |
     value: "egov-persister-deadletter"
   - name: persister.batch.parallel-topic-processing.thread-pool-size
     value: "1"
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: PERSISTER_BULK_ENABLED
+    value: "true"
+  - name: PERSISTER_BATCH_TOPICS
+    value: "boundary-relationship-bulk-create-job"

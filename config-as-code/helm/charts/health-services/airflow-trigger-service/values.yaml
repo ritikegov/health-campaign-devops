@@ -107,6 +107,15 @@ env: |
   - name: DB_SCHEMA
     value: "public"
 
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV_DASHBOARD_ANALYTICS_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: dashboard-analytics
+  - name: CUSTOM_REPORT_RETRY_COOLDOWN_SECONDS
+    value: "3600"
+
 resources: |
   requests:
     cpu: "50m"

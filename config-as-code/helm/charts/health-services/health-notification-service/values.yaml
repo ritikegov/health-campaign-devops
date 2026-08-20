@@ -187,3 +187,17 @@ env: |
       configMapKeyRef:
         name: egov-config
         key: egov-state-level-tenant-id
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: EGOV_PROJECT_FACILITY_SEARCH_URL
+    value: "/project/facility/v1/_search"
+  - name: KAFKA_TENANT_ID_PATTERN
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: kafka-tenant-id-pattern
+  - name: TRACER_KAFKA_MDC_ENABLED
+    value: {{ index .Values "kafka-mdc-enabled" | quote }}
+
+# --- values mirrored from the demo chart (referenced by the env entries above) ---
+kafka-mdc-enabled: "true"

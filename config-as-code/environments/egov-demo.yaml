@@ -370,6 +370,7 @@ egov-mdms-service:
   java-args: -Dspring.profiles.active=monitoring
 
 egov-indexer:
+  kafka-consumer-group-id: "egov-indexer-consumer-grp"   # mirrored from demo (hcm-demo-azure.yaml)
   heap: "-Xmx512m -Xms512m"
   memory_limits: "768Mi"
   initContainers:

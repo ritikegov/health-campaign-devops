@@ -151,3 +151,7 @@ env: |
     value: {{ index .Values "limit-id-user-device-per-day-expire-days" | quote }}
   - name: LIMIT_ID_USER_DEVICE_TOTAL_EXPIRE_DAYS
     value: {{ index .Values "limit-id-user-device-total-expire-days" | quote }}
+
+  # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  - name: ID_DISPATCH_RETRIEVAL_RESTRICT_TO_TODAY_ENABLED
+    value: {{ index .Values "id-dispatch-retrieval-restrict-to-today-enabled" | quote }}
