@@ -113,7 +113,7 @@ modules:
     services:
       - egovio/project-factory:master-b912a1c
       - egovio/workbench-ui:master-ff2c862
-      - egovio/excel-ingestion:excel-ingestion-dynamic-target-columns-79af2c0
+      - egovio/excel-ingestion:master-b9c634e
       - egovio/boundary-management:master-b912a1c
       - airflow-trigger-service:HCMPRE-4161-airflowTrigger-1dbd349
   - name: m_hcm_microplanning
