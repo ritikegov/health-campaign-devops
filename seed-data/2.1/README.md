@@ -52,6 +52,23 @@ kubectl exec -n backbone deploy/redis -- redis-cli DEL messages computedMessages
 Browsers cache localisation + the boundary tree in IndexedDB — a user seeing raw codes or a truncated
 boundary picker needs **Clear-site-data**, not a reload.
 
+## Campaign creation — what `21` enables and one demo-inherited limitation
+`21` carries the `HCM-ADMIN-CONSOLE.schemas` rows `target-<projectType>` (e.g. `target-CO-DELIVERY`,
+`target-INT-CAMP`, `target-POLIO`). excel-ingestion **requires** the matching `target-<projectType>` row
+or campaign processing fails with `Schema 'target-<projectType>' not found in MDMS`. These are ordinary
+MDMS **data** rows (not schema defs), so `apply.sh` handles them by running `21`. A unified campaign then
+reaches status `created` (UI "Upcoming") end-to-end via API — verified on `mz` for CO-DELIVERY.
+
+**Known limitation (inherited from demo, NOT a seed defect):** the deployed excel-ingestion
+(`dynamic-target-columns` build) generates boundary target columns per projectType *product*
+(`..._TARGET_CO-DELIVERY_VITAMIN_A_SUPPLEMENT`, `..._AZITHROMYCIN`), but `HCM-ADMIN-CONSOLE.targetConfigs`
+still lists legacy column names (CO-DELIVERY → `SPAQ1/SPAQ2/NOPV2/IVERMETCIN/ALBENDAZOLE`; MR-DN → `SMC_*`).
+project-factory extracts targets by those stale names → no match → **0 projects** are created for new
+campaigns (mappings then fail non-blockingly; the campaign still reaches `created`). This mismatch is
+present in hcm-demo itself (confirmed live), so the seed reproduces demo faithfully. To make new campaigns
+create projects, update `targetConfigs` per projectType to the dynamic per-product column names — an
+upstream/demo data decision, deliberately **not** baked into this demo-mirroring seed.
+
 ## Not included (by design — runtime, not seed)
 - **20k HANDOVER boundary hierarchy + data** — bulk runtime load via boundary/excel-ingestion.
 - **The 2.0-era Postman collections** — GitBook attachments on the docs site.
