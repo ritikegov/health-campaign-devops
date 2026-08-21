@@ -91,7 +91,7 @@ modules:
       - egovio/household:master-b912a1c
       - egovio/project:master-b912a1c
       - egovio/referralmanagement:master-b912a1c
-      - egovio/health-attendance:master-cdc5957
+      - egovio/health-attendance:master-5767379
       - egovio/service-request:master-7f8a6b8
       - egovio/health-muster-roll:master-cdc5957
       - egovio/health-expense:master-cdc5957
@@ -111,9 +111,9 @@ modules:
       - "m-health"
       - "m_hcm_microplanning"
     services:
-      - egovio/project-factory:master-b912a1c
+      - egovio/project-factory:master-38dc577
       - egovio/workbench-ui:master-2376f89
-      - egovio/excel-ingestion:master-b9c634e
+      - egovio/excel-ingestion:master-38dc577
       - egovio/boundary-management:master-b912a1c
       - airflow-trigger-service:HCMPRE-4161-airflowTrigger-f38a7d8
   - name: m_hcm_microplanning
