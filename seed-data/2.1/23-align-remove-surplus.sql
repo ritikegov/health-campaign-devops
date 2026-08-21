@@ -4886,4 +4886,16 @@ DELETE FROM eg_mdms_data d
 -- this file's no-op-on-a-fresh-install guarantee. Measured: applying such a cleanup to a database
 -- seeded purely from this bundle removed 143 rows. They grant nothing and are harmless.
 
+-- map-config.GeoJsonMapping rows whose KEY embeds the corrupted hcm-mz-assets hostname. An early
+-- revision of this bundle ran the demo->mz substitution inside URLs; this master's uniqueidentifier
+-- is '<code>.<url>', so the substitution corrupted the key itself and the later, URL-protected
+-- upsert could never match those rows again - they survived as a dead second copy pointing at a
+-- bucket that does not exist (the real one is hcm-demo-assets). demo has 0 such rows and file 21
+-- emits none (its only 'hcm-mz-assets' occurrence is a header comment), so this is a no-op on a
+-- fresh install and removes exactly the 21 relics on a cluster seeded with the pre-fix bundle
+-- (measured on testhealth 2026-08-21: DELETE 21, leaving the 21 correct rows + 6 other-host rows).
+DELETE FROM eg_mdms_data
+ WHERE schemacode = 'map-config.GeoJsonMapping'
+   AND data::text LIKE '%hcm-mz-assets%';
+
 COMMIT;
