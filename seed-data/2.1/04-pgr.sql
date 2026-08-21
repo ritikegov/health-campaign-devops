@@ -21,6 +21,14 @@
 
 BEGIN;
 
+-- eg_pgr_service_v2.hierarchytype: added upstream by pgr-services migration
+-- V20260818120000__add_hierarchytype.sql. The deployed pgr-services rowmapper reads this column
+-- unconditionally, so a cluster whose pgr-services-db image predates 2026-08-18 fails EVERY
+-- complaint update with "The column name hierarchytype was not found in this ResultSet" (400
+-- QUERY_EXECUTION_ERROR). Guarded so it is a no-op where the migration already ran.
+ALTER TABLE eg_pgr_service_v2 ADD COLUMN IF NOT EXISTS hierarchytype character varying(64);
+
+
 -- remove the superseded legacy workflow (uuids pgr-bs-mz / pgr-st-* / pgr-ac-* from the old file)
 DELETE FROM eg_wf_action_v2 WHERE currentstate IN (SELECT uuid FROM eg_wf_state_v2 WHERE businessserviceid='pgr-bs-mz')
                                OR nextstate    IN (SELECT uuid FROM eg_wf_state_v2 WHERE businessserviceid='pgr-bs-mz');
