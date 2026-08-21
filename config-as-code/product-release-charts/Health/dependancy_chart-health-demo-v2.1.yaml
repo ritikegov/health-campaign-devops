@@ -86,7 +86,7 @@ modules:
       - egovio/facility:master-b912a1c
       - egovio/product:master-b912a1c
       - egovio/individual:master-bd88994
-      - egovio/transformer:multihierarchy-error-catch-2c59d3b
+      - egovio/transformer:transformer-final-2.1-2c59d3b
       - egovio/stock:master-b912a1c
       - egovio/household:master-b912a1c
       - egovio/project:master-b912a1c
@@ -96,7 +96,7 @@ modules:
       - egovio/health-muster-roll:master-cdc5957
       - egovio/health-expense:master-cdc5957
       - egovio/health-expense-calculator:master-a5e4c31
-      - egovio/payments-ui:master-4e0e7fd
+      - egovio/payments-ui:master-2376f89
       - egovio/pdf-service:central-instance-pdf-7b3064f
       - egovio/beneficiary-idgen:beneficiary-idgen-central-instance-a8d144a
       - inbox:pgr-hierarchy-modification-inbox-d3ae73e
@@ -112,7 +112,7 @@ modules:
       - "m_hcm_microplanning"
     services:
       - egovio/project-factory:master-b912a1c
-      - egovio/workbench-ui:master-4e0e7fd
+      - egovio/workbench-ui:master-2376f89
       - egovio/excel-ingestion:master-b9c634e
       - egovio/boundary-management:master-b912a1c
       - airflow-trigger-service:HCMPRE-4161-airflowTrigger-f38a7d8
