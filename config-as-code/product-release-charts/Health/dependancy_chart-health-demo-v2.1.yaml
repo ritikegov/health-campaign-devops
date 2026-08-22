@@ -9,6 +9,7 @@ modules:
       - elasticsearch-data
       - elasticsearch-master
       - kibana
+      - clamav
   - name: authn-authz
     services:
       - redis
