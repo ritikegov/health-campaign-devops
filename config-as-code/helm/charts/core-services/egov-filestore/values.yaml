@@ -126,6 +126,9 @@ env: |
     value: {{ index .Values "kafka-topics-malware-scan-request" | quote }}  
 
   # --- mirrored from the demo chart (health-campaign-devops @ azure-install-hcm-demo) ---
+  # Azure-only block, guarded: demo runs Azure blob storage; S3/EKS installs (is-s3-enabled)
+  # must not receive these vars (FIXED_BUCKET_REGION af-south-1 would mis-sign S3 requests).
+  {{- if index .Values "is-azure-storage-enabled" }}
   - name: SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE
     value: "180MB"
   - name: MINIO_ENABLED
@@ -146,4 +149,4 @@ env: |
         key: awssecretkey
   - name: AZURE_DEFAULTENDPOINTSPROTOCOL
     value: "https"
-  {{- else if index .Values "is-s3-enabled" }}
+  {{- end }}
