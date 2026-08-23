@@ -21,7 +21,7 @@ The Job will not start until that secret exists.
 
 CARDS DEPENDENCY: the roles above must also exist as access-control MDMS
 roles + roleactions for the cards to render. Those live in the MDMS data repo
-(see docs/HCM-2.1-post-install-runbook.md) — this Job only guarantees the USER
+(see docs/FRESH-INSTALL-RUNBOOK.md) — this Job only guarantees the USER
 exists with the roles attached.
 
 Disabled by default (hcmSeed.enabled=false); enable per-environment once the
