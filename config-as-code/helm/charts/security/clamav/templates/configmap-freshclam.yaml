@@ -1,3 +1,7 @@
+{{- $envOverrides := index .Values (tpl .Chart.Name .) -}}
+{{- $baseValues := .Values | deepCopy -}}
+{{- $values := dict "Values" (mustMergeOverwrite $baseValues $envOverrides) -}}
+{{- with mustMergeOverwrite . $values }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,3 +20,4 @@ data:
     {{ $key }} {{ $value }}
   {{- end }}
 {{- end }}
+{{- end -}}

@@ -1,3 +1,7 @@
+{{- $envOverrides := index .Values (tpl .Chart.Name .) -}}
+{{- $baseValues := .Values | deepCopy -}}
+{{- $values := dict "Values" (mustMergeOverwrite $baseValues $envOverrides) -}}
+{{- with mustMergeOverwrite . $values }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -215,3 +219,4 @@ spec:
         storageClassName: {{ .Values.persistentVolume.storageClass | quote }}
         {{- end }}
         {{- end }}
+{{- end -}}

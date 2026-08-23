@@ -1,3 +1,7 @@
+{{- $envOverrides := index .Values (tpl .Chart.Name .) -}}
+{{- $baseValues := .Values | deepCopy -}}
+{{- $values := dict "Values" (mustMergeOverwrite $baseValues $envOverrides) -}}
+{{- with mustMergeOverwrite . $values }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -35,3 +39,4 @@ data:
 
     echo "Starting ClamAV daemon..."
     exec clamd --config-file=/etc/clamav/clamd.conf
+{{- end -}}

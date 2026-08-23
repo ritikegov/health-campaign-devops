@@ -1,3 +1,7 @@
+{{- $envOverrides := index .Values (tpl .Chart.Name .) -}}
+{{- $baseValues := .Values | deepCopy -}}
+{{- $values := dict "Values" (mustMergeOverwrite $baseValues $envOverrides) -}}
+{{- with mustMergeOverwrite . $values }}
 {{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -33,3 +37,4 @@ spec:
       honorLabels: {{ .Values.metrics.serviceMonitor.honorLabels }}
       honorTimestamps: {{ .Values.metrics.serviceMonitor.honorTimestamps }}
 {{- end }}
+{{- end -}}

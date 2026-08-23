@@ -1,3 +1,7 @@
+{{- $envOverrides := index .Values (tpl .Chart.Name .) -}}
+{{- $baseValues := .Values | deepCopy -}}
+{{- $values := dict "Values" (mustMergeOverwrite $baseValues $envOverrides) -}}
+{{- with mustMergeOverwrite . $values }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,3 +31,4 @@ spec:
     {{- end }}
   selector:
     {{- include "common.labels" . | nindent 4 }}
+{{- end -}}
