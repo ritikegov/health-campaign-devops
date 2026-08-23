@@ -212,6 +212,36 @@ core-ui:
       <script src=https://hcm-demo-assets.s3.ap-south-1.amazonaws.com/analytics/analytics.js type=text/javascript ></script>
       ';"
 
+egov-malware-detection:
+  image:
+    repository: egovio/egov-malware-detection
+    tag: master-malware-fix-77a437a
+  initContainers:
+    dbMigration:
+      image:
+        repository: egovio/egov-malware-detection-db
+        tag: master-malware-fix-77a437a
+  # ClamAV Configuration
+  clamav-host: "clamav.security"
+  clamav-port: "3310"
+  clamav-timeout: "60000"
+  clamav-chunk-size: "2048"
+  # S3 Configuration (uses same AWS credentials from egov-filestore secret)
+  is-s3-enabled: false
+  minio-enabled: false
+  fixed-bucketname: "egov-rainmaker" #add bucket name
+  fixed-bucket-region: "ap-south-1" #add bucket region
+  quarantine-bucketname: "egov-quarantine" #add quarantine bucket name
+   # Azure Blob Storage Configuration
+  is-azure-storage-enabled: "true"
+  azure-blob-container: "egov-filestore"
+  # Slack Notification (optional - enable and provide webhook URL to use)
+  slack-enabled: true
+  # slack-webhook-url: "https://hooks.slack.com/services/xxx/xxx/xxx"
+  slack-channel: "#filestore-malware-alerts"
+  slack-username: "MalwareBot"
+  slack-icon-emoji: ":warning:"
+
 egov-filestore:
   volume: /opt/eGov/filestore
   is-bucket-fixed: "true"
