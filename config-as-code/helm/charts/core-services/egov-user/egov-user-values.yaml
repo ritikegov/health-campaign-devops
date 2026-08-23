@@ -4,7 +4,7 @@ labels:
   group: "core"
 
 # HCMADMIN bootstrap-user seed (see templates/hcmadmin-seed-job.yaml and
-# docs/HCM-2.1-post-install-runbook.md). Disabled by default; enable per-env
+# docs/FRESH-INSTALL-RUNBOOK.md). Disabled by default; enable per-env
 # after creating the password secret. Roles mirror the live HCMADMIN user and
 # are owner-authorized.
 hcmSeed:

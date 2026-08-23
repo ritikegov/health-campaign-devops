@@ -86,8 +86,6 @@ env: |
         name: egov-service-host
         key: mdms-service-v2
   {{- if index .Values "egov-mdms-service-endpoint-key" }}
-  - name: EGOV_MDMS_SEARCH_V2_ENDPOINT
-    value: {{ index .Values "egov-mdms-service-endpoint-key" | quote }} 
   {{- end }}
   - name: EGOV_MDMS_SEARCH_V2_ENDPOINT
     value: "mdms-v2/v1/_search"   

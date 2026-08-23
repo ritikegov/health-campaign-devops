@@ -147,8 +147,6 @@ env: |
     value: {{ .Values.mdmsV2CreateEndpoint | default "mdms-v2/v2/_create" }}
   - name: EGOV_MDMS_V2_UPDATE_ENDPOINT
     value: {{ .Values.mdmsV2UpdateEndpoint | default "mdms-v2/v2/_update" }}
-  - name: EGOV_MDMS_V1_SEARCH_ENDPOINT
-    value: {{ .Values.mdmsV1SearchEndpoint | default "mdms-v2/v1/_search" }}
   - name: EGOV_IDGEN_PATH
     value: egov-idgen/id/_generate
   - name: EGOV_MDMS_SCHEMA_PATH
@@ -407,8 +405,6 @@ env: |
     value: {{ .Values.waitTimeOfEachAttemptMs | default "40000" | quote }}
   - name: RETRY_TILL_RESOURCE_CREATION_COMPLETES
     value: {{ .Values.retryTillResourceCreationCompletes | default "100" | quote }}
-  - name: LOCALIZATION_MODULE
-    value: {{ .Values.localizationModule | default "hcm-admin-schemas" }}
   - name: KAFKAJS_GROUP_ID
     value: {{ .Values.groupId | default "project-factory" }}
   - name: EGOV_WORKER_REGISTRY_HOST
