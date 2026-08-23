@@ -38,6 +38,7 @@ spec:
               mkdir -p /data/run
               mkdir -p /data/tmp
               mkdir -p /data/logs
+              chown -R {{ .Values.podSecurityContext.runAsUser | default 100 }}:{{ .Values.podSecurityContext.runAsGroup | default 101 }} /data/run /data/tmp /data/logs
               chmod 755 /data/run
               chmod 755 /data/tmp
               chmod 755 /data/logs
