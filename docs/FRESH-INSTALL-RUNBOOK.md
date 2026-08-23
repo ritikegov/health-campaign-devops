@@ -71,6 +71,8 @@ hierarchy-definition `_create`, boundary `_create`, boundary-relationships `_cre
    status `created` → `SELECT count(*) FROM project WHERE referenceid='<campaign number>'` > 0.
 
 ## Known cosmetics / open
-- kibana readiness 503 on a fresh es-cluster (monitoring UI only).
-- Several charts still render duplicate env names (harmless on create; can break strategic-merge
-  patches — fix pattern: `8bcccaf9`).
+- kibana can wedge at readiness 503 while the fresh es-cluster finishes its first bootstrap —
+  recreate the kibana pod once Elasticsearch is settled and it reports available in ~3 minutes
+  (verified live).
+- Duplicate env names across charts: RESOLVED in `82c01491` (all 61 removed; proven behavior-neutral
+  by comparing every container's effective last-wins env before/after across all 68 services).
