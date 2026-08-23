@@ -167,7 +167,6 @@ env: |
   - name: MDMS_PATH
     value: "/mdms-v2/v1/_search"
   - name: EGOV.MDMS.MASTER.NAME
-  - name: EGOV.MDMS.MASTER.NAME
     value: ""
   - name: EGOV.MDMS.INTEGRATION.ENABLED
     value: "false"
