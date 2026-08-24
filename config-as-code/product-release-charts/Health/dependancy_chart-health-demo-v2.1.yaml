@@ -117,7 +117,7 @@ modules:
       - "m_hcm_microplanning"
     services:
       - egovio/project-factory:master-32ff216
-      - egovio/workbench-ui:master-2376f89
+      - egovio/workbench-ui:master-b40c93b
       - egovio/excel-ingestion:master-32ff216
       - egovio/boundary-management:master-b912a1c
       - airflow-trigger-service:master-38dc577

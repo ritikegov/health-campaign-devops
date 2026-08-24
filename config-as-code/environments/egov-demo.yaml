@@ -192,7 +192,7 @@ console:
     tag: ondo-proxy-f806f086a2-149
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   custom-js-injection: |
     sub_filter.conf: "
       sub_filter  '<head>' '<head>
@@ -265,7 +265,7 @@ egov-idgen:
 pgr-services:
   central-instance-build: true
   central-instance-name: egov
-  central-instance-enabled: true
+  central-instance-enabled: false
 
 inbox-v2:
   namespace: egov
@@ -288,7 +288,7 @@ inbox:
 household:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   egov-mdms-service-host-key: 'mdms-service-v2'
   egov-mdms-service-endpoint-key: "/mdms-v2/v1/_search"
 
@@ -296,12 +296,12 @@ household:
 service-request:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
 
 referralmanagement:
   central-instance-build: true
   central-instance-name: egov
-  central-instance-enabled: true
+  central-instance-enabled: false
   memory_limits: 768Mi
   heap: "-Xmx384m -Xms384m"
   egov-mdms-service-host-key: 'mdms-service-v2'
@@ -310,12 +310,12 @@ referralmanagement:
 stock:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
 
 egov-otp:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   memory_limits: "512Mi"
   heap: "-Xmx256m -Xms256m"   
 
@@ -339,7 +339,7 @@ egov-notification-sms:
 egov-user:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   replicas: 1
   heap: "-Xmx512m -Xms256m"
   memory_limits: 512Mi
@@ -412,7 +412,7 @@ egov-pg-service:
 egov-mdms-service:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   replicas: 1
   heap: "-Xmx512m -Xms512m"
   images:
@@ -630,7 +630,7 @@ tl-services:
 egov-workflow-v2:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   logging-level: "DEBUG"
   java-args: -Dspring.profiles.active=monitoring
   heap: "-Xmx192m -Xms192m"
@@ -650,7 +650,7 @@ transformer:
 egov-hrms:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   java-args: -Dspring.profiles.active=monitoring
   replicas : 1
   heap: '-Xmx512m -Xms256m'
@@ -678,7 +678,7 @@ egov-accesscontrol:
 health-pgr-services:
   central-instance-build: true
   central-instance-name: egov
-  central-instance-enabled: true
+  central-instance-enabled: false
   db-schema-names: "kano,kebbi"
   notification-sms-enabled: "true"
   notification-email-enabled: "false"
@@ -695,7 +695,7 @@ health-pgr-services:
 facility:
   central-instance-build: true
   central-instance-name: egov
-  central-instance-enabled: true
+  central-instance-enabled: false
   replicas: 1
   heap: '-Xmx512m -Xms256m'
   memory_limits: 512Mi
@@ -703,7 +703,7 @@ facility:
 project:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   replicas: 1
   memory_limits: 768Mi
   heap: '-Xmx768m -Xms512m'
@@ -711,7 +711,7 @@ project:
 individual:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   replicas: 2
   heap: '-Xmx512m -Xms256m'
   memory_limits: 512Mi
@@ -724,7 +724,7 @@ individual:
 product:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   heap: "-Xmx512m -Xms256m"
   replicas: 1
   memory_limits: 512Mi
@@ -781,7 +781,7 @@ beneficiary-idgen:
 project-factory:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   logLevel: 'debug'
   defaultLocale: 'en_MZ'
   defaultTenantId: 'mz'
@@ -812,7 +812,7 @@ excel-ingestion:
   java-debug-port: 5005
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   egov-mdms-service-host-key: 'mdms-service-v2'
   egov-mdms-service-endpoint-key: "mdms-v2/v2/_search"
 
@@ -827,7 +827,7 @@ boundary-management:
    validateCampaignIdInMetadata: 'false'
    central-instance-name: egov
    central-instance-build: true
-   central-instance-enabled: true
+   central-instance-enabled: false
 
 plan-service:
   egov-mdms-service-host-key: 'mdms-service-v2'
@@ -846,7 +846,7 @@ resource-generator:
 
 health-notification-service:
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   mdmsV1SearchEndpoint: 'mdms-v2/v1/_search'
   mdmsV2SearchEndpoint: 'mdms-v2/v2/_search'
   tenantId: "mz"
@@ -859,7 +859,7 @@ health-notification-service:
 
 egov-notification-push:
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   tenantId: "mz"
   heap: "-Xmx768m -Xms512m"
   cpu_requests: 50m
@@ -871,7 +871,7 @@ egov-notification-push:
 health-attendance:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   heap: "-Xmx256m -Xms256m"
   memory_limits: 512Mi
   egov-mdms-service-host-key: 'mdms-service-v2'
@@ -913,7 +913,7 @@ health-expense-calculator:
 health-expense:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   tracing-enabled: true
   java-enable-debug: true
   business-workflow-status-map: "{'EXPENSE.WAGES':'false'}"
@@ -927,7 +927,7 @@ health-expense:
 health-muster-roll:
   central-instance-name: egov
   central-instance-build: true
-  central-instance-enabled: true
+  central-instance-enabled: false
   tracing-enabled: true
   java-enable-debug: true
   musterroll-default-offset: 0
