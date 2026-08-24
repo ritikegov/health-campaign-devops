@@ -70,6 +70,30 @@ hierarchy-definition `_create`, boundary `_create`, boundary-relationships `_cre
    filestore upload → `project-type/update` action=create (startDate must be a FUTURE date) →
    status `created` → `SELECT count(*) FROM project WHERE referenceid='<campaign number>'` > 0.
 
+## 7. Image pins vs demo (measured 2026-08-24)
+Demo's builds come from `health-campaign-devops@azure-install-hcm-demo:config-as-code/environments/hcm-demo-azure.yaml`.
+Compared service-by-service against that file, with Docker Hub `last_updated` as the tie-breaker:
+50 of 57 comparable services are identical. Of the 7 that differ:
+
+| service | this chart | demo | decision |
+|---|---|---|---|
+| project-factory | `master-32ff216` | `master-32ff216` | adopted demo (2026-08-21 11:13) |
+| excel-ingestion | `master-32ff216` | `master-32ff216` | adopted demo (2026-08-21 11:23) |
+| airflow-trigger-service | `master-38dc577` | `master-38dc577` | adopted demo; it is the MERGED form of the `HCMPRE-4161-airflowTrigger` branch this chart used to pin |
+| dashboard-ui | `master-4e0e7fd` (08-20) | `master-88c8318` (04-21) | kept ours — demo is 4 months behind |
+| payments-ui | `master-2376f89` (08-20) | `HCMPRE-1111-883b1a7` (05-19) | kept ours — demo on an old feature branch |
+| workbench-ui | `master-2376f89` (08-20) | `master-9fcd8db` (05-25) | kept ours — demo is 3 months behind |
+| transformer | `transformer-final-2.1-2c59d3b` (08-21) | `HDDF-5226-ERROR-PATCH-TRANSFORMER-acbd7ef` (07-10) | kept ours — demo on an error-patch branch |
+
+The two `master-38dc577` → `master-32ff216` moves are strict fast-forwards: `git merge-base --is-ancestor`
+confirms `38dc577` is an ancestor of `32ff216`, and that `b9c634e` — the commit the campaign/attendance e2e
+depends on — is an ancestor of both. `32ff216` adds PR #2154 (attendance-register bugfixes).
+`plan-service` and `resource-generator` pin `master-b912a1c`, matching demo; the live `v1.0.2-*` tags seen on
+a hand-built cluster are the drift, not the chart.
+
+**Do not "align to demo" mechanically.** Four of the seven pins here are deliberately ahead of demo. Re-check
+with build timestamps before changing any of them.
+
 ## Known cosmetics / open
 - kibana can wedge at readiness 503 while the fresh es-cluster finishes its first bootstrap —
   recreate the kibana pod once Elasticsearch is settled and it reports available in ~3 minutes
