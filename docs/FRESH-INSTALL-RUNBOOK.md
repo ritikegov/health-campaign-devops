@@ -94,6 +94,28 @@ a hand-built cluster are the drift, not the chart.
 **Do not "align to demo" mechanically.** Four of the seven pins here are deliberately ahead of demo. Re-check
 with build timestamps before changing any of them.
 
+## 8. UPGRADE-IN-PLACE TRAP: client-side apply silently drops env vars (measured 2026-08-24)
+The deployer applies with client-side `kubectl apply`. Re-deploying a service whose Deployment was created
+from an OLDER chart can produce a live spec with FEWER env vars than the manifest that was applied — the
+strategic-merge of the `env` list loses entries. Measured on the 3-service pin bump:
+
+| service | manifest applied | live spec after apply | lost |
+|---|---|---|---|
+| excel-ingestion | 102 vars | 98 | `SPRING_DATASOURCE_URL/USERNAME/PASSWORD/DRIVER_CLASS_NAME` → Spring fell back to `localhost:5432`, `Connection refused`, pod never became ready |
+| project-factory | 249 vars | 247 | `EGOV_MDMS_V1_SEARCH_ENDPOINT`, `LOCALIZATION_MODULE` — pod stayed 1/1 GREEN, so this class is invisible to health checks |
+| airflow-trigger-service | 13 vars | 13 | none |
+
+This is NOT a chart defect: the chart renders all 102/249 correctly (`helm template` is deterministic — 5
+consecutive renders gave identical output), and the `kubectl.kubernetes.io/last-applied-configuration`
+annotation contained every var. Same family as the `worker-registry` value→valueFrom flip that needed
+delete+recreate.
+
+**Fix / gate.** After ANY re-deploy onto an existing cluster:
+1. `kubectl -n egov apply --server-side --force-conflicts -f <rendered deployment>` — this restored both
+   services to full env with no downtime, and is the preferred remedy over delete+recreate.
+2. Then PROVE it: capture each container's env-var name set before and after and diff them. A green pod is
+   not evidence — project-factory above lost 2 vars while reporting healthy.
+
 ## Known cosmetics / open
 - kibana can wedge at readiness 503 while the fresh es-cluster finishes its first bootstrap —
   recreate the kibana pod once Elasticsearch is settled and it reports available in ~3 minutes
