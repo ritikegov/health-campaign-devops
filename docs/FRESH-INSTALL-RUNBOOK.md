@@ -80,10 +80,10 @@ Compared service-by-service against that file, with Docker Hub `last_updated` as
 | project-factory | `master-32ff216` | `master-32ff216` | adopted demo (2026-08-21 11:13) |
 | excel-ingestion | `master-32ff216` | `master-32ff216` | adopted demo (2026-08-21 11:23) |
 | airflow-trigger-service | `master-38dc577` | `master-38dc577` | adopted demo; it is the MERGED form of the `HCMPRE-4161-airflowTrigger` branch this chart used to pin |
-| dashboard-ui | `master-4e0e7fd` (08-20) | `master-88c8318` (04-21) | kept ours — demo is 4 months behind |
-| payments-ui | `master-2376f89` (08-20) | `HCMPRE-1111-883b1a7` (05-19) | kept ours — demo on an old feature branch |
-| workbench-ui | `master-2376f89` (08-20) | `master-9fcd8db` (05-25) | kept ours — demo is 3 months behind |
-| transformer | `transformer-final-2.1-2c59d3b` (08-21) | `HDDF-5226-ERROR-PATCH-TRANSFORMER-acbd7ef` (07-10) | kept ours — demo on an error-patch branch |
+| dashboard-ui | `master-4e0e7fd` | `master-4e0e7fd` **live** | already identical (see correction) |
+| payments-ui | `master-2376f89` | `master-2376f89` **live** | already identical (see correction) |
+| transformer | `transformer-final-2.1-2c59d3b` | same **live** | already identical (see correction) |
+| workbench-ui | `master-2376f89` | `master-b40c93b` **live** | demo is 1 day AHEAD — adopt |
 
 The two `master-38dc577` → `master-32ff216` moves are strict fast-forwards: `git merge-base --is-ancestor`
 confirms `38dc577` is an ancestor of `32ff216`, and that `b9c634e` — the commit the campaign/attendance e2e
@@ -91,8 +91,27 @@ depends on — is an ancestor of both. `32ff216` adds PR #2154 (attendance-regis
 `plan-service` and `resource-generator` pin `master-b912a1c`, matching demo; the live `v1.0.2-*` tags seen on
 a hand-built cluster are the drift, not the chart.
 
-**Do not "align to demo" mechanically.** Four of the seven pins here are deliberately ahead of demo. Re-check
-with build timestamps before changing any of them.
+### CORRECTION 2026-08-24 — `hcm-demo-azure.yaml` IS NOT A PROXY FOR DEMO'S LIVE STATE
+The first version of this table claimed four services were "deliberately ahead of demo" (dashboard-ui by 4
+months, payments-ui by 3, workbench-ui by 3, transformer by 6 weeks). **That was wrong**, and it was wrong
+because it compared against demo's env file instead of demo's cluster. Read live from the demo cluster with
+`KUBECONFIG=~/Downloads/readonly-kubeconfig.yaml` (context `readonly-context`):
+
+```
+dashboard-ui  demo egovio/dashboard-ui:master-4e0e7fd   == testhealth   IDENTICAL
+payments-ui   demo egovio/payments-ui:master-2376f89    == testhealth   IDENTICAL
+transformer   demo transformer-final-2.1-2c59d3b        == testhealth   IDENTICAL
+workbench-ui  demo master-b40c93b  vs testhealth master-2376f89   demo AHEAD by ~1 day
+```
+
+Only **2 of 60** live images differ at all: `workbench-ui` (demo ahead) and `redis` (demo runs 7.2.4 while
+BOTH repos declare 3.2 — demo's pod is an undeclared manual bump, so testhealth is the compliant side).
+
+Why the file misleads: `hcm-demo-azure.yaml:167` still pins `workbench-ui: master-9fcd8db`, but demo's real
+pin lives in the tenant overlay `demo-tenant.yaml`. The env file is stale for any service overridden there.
+
+**Rule:** verify demo's state against the demo CLUSTER via the readonly kubeconfig. Use `hcm-demo-azure.yaml`
+only for what demo *declares*, never for what it *runs*, and say which one you measured.
 
 ## 8. UPGRADE-IN-PLACE TRAP: client-side apply silently drops env vars (measured 2026-08-24)
 The deployer applies with client-side `kubectl apply`. Re-deploying a service whose Deployment was created
